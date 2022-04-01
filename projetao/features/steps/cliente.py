@@ -21,14 +21,17 @@ def step_impl(context):
 
 @given("I fill all fields")
 def step_impl(context):
+    cliente = Cliente.objects.all()
+    record = cliente[len(cliente) - 1]
+    variavel_id = record.id + 1
     nome = context.browser.find_element_by_name("nome")
     nome.send_keys("Testador")
     email = context.browser.find_element_by_name("email")
-    email.send_keys("cadastrar3@email.com")
+    email.send_keys("email@email" + str(variavel_id) + ".com")
     contato = context.browser.find_element_by_name("contato")
     contato.send_keys("00078795455")
     cpf_cnpj = context.browser.find_element_by_name("cpf_cnpj")
-    cpf_cnpj.send_keys("45265235261")
+    cpf_cnpj.send_keys(variavel_id)
     senha = context.browser.find_element_by_name("senha")
     senha.send_keys("123456")
 
@@ -37,14 +40,17 @@ def step_impl(context):
     button = context.browser.find_element_by_name("cadastro")
     button.submit()
 
+
 @then("I create my profile")
 def step_impl(context):
     cliente = Cliente.objects.all()
-    assert cliente.filter(email="cadastrar3@email.com")!=[]
+    record = cliente[len(cliente) - 1]
+    variavel_id = record.id
+    assert cliente.filter(email=("email@email" + str(variavel_id) + ".com"))  != []
 
 @then("go to my Profile View")
 def step_impl(context):
-    assert context.browser.title=="Perfil"
+    assert context.browser.title=="Meu Perfil"
 
 
 #=================================================================================================================
@@ -77,23 +83,16 @@ def step_impl(context):
 #=========================================================================================================
 @Given("I am registered user")
 def step_impl(context):
-    context.browser = webdriver.Chrome()
-    context.browser.get("http://127.0.0.1:8000/")
-    nome = context.browser.find_element_by_name("nome")
-    nome.send_keys("Testador_Delete")
-    email = context.browser.find_element_by_name("email")
-    email.send_keys("delete3@email.com")
-    contato = context.browser.find_element_by_name("contato")
-    contato.send_keys("00078795455")
-    cpf_cnpj = context.browser.find_element_by_name("cpf_cnpj")
-    cpf_cnpj.send_keys("62165865817")
-    senha = context.browser.find_element_by_name("senha")
-    senha.send_keys("123456")
-    button = context.browser.find_element_by_name("cadastro")
-    button.submit()
+    context.execute_steps(u"""
+    given I am on the Cadastrar Cliente View
+    and I fill all fields
+    when I click on the Submit button
+    then I create my profile 
+    and go to my Profile View
+    """)
 @Given("I am at the profile view")
 def step_impl(context):
-    assert context.browser.title == "Perfil"
+    assert context.browser.title == "Meu Perfil"
 
 @When("I click Desativar Conta")
 def step_impl(context):

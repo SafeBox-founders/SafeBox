@@ -29,3 +29,13 @@ class ClienteTest(TestCase):
         testurl = reverse('visualizar',args=[record.email])
         url = reverse('visualizar', args=[self.cliente.email])
         self.assertEqual(url,testurl)
+
+    def test_desactivate(self):
+        cliente = Cliente.objects.get(email="teste@gmail.com")
+        cliente.deactivate()
+        self.assertEqual(False, cliente.active)
+
+    def test_reactivate(self):
+        cliente = Cliente.objects.get(email="teste@gmail.com")
+        cliente.reactivate()
+        self.assertEqual(True, cliente.active)

@@ -13,4 +13,9 @@ Feature: Test new cliente can be added in the Safebox
         Then I do not create my profile
         And stay in the Cadastrar Cliente View
     
-    
+    Scenario: Deactivate a existent client in the Safebox
+        Given I am registered user
+        And I am at the profile view
+        When I click Desativar Conta
+        Then I deactivate my profile
+        And go to Cadastrar Cliente view

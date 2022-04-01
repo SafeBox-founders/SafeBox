@@ -9,9 +9,17 @@ class Cliente(models.Model):
     senha = models.CharField(max_length=12,null=False)
     joined = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
+    active = models.BooleanField(default=True)
+
 
     def __str__(self):
         return self.email
 
     def get_absolute_url(self):
         return reverse('visualizar',kwargs={"str":self.email})
+
+    def deactivate(self):
+        self.active = False
+
+    def reactivate(self):
+        self.active = True

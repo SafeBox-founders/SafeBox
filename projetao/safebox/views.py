@@ -19,4 +19,13 @@ def cliente_create_view(request):
 def cliente_detail_view(request, email):
     context = {}
     context["data"] = Cliente.objects.get(email=email)
+    if request.method == 'POST':
+        action = request.POST.get('desativar')
+        if action == 'Desativar Conta':
+            context['data'].deactivate()
+            context['data'].save()
+
+        return redirect('cadastrar')
+
     return render(request, "cliente_detail_view.html", context)
+

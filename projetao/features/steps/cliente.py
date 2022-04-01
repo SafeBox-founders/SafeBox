@@ -1,14 +1,17 @@
 import os
+import sys
+
 from time import sleep
 import django
 os.environ.setdefault("DJANGO_SETTINGS_MODULE","projetao.settings")
 django.setup()
-
+sys.path.append("/home/battist/PycharmProjects/SafeBox")
 from os import path
 from behave import *
 from pandas import options
-from selenium import webdriver 
+from selenium import webdriver
 from safebox.models import Cliente
+
 use_step_matcher("re")
 
 @given("I am on the Cadastrar Cliente View")
@@ -21,11 +24,11 @@ def step_impl(context):
     nome = context.browser.find_element_by_name("nome")
     nome.send_keys("Testador2")
     email = context.browser.find_element_by_name("email")
-    email.send_keys("email001010231@email.com1")
+    email.send_keys("email001010231@email.com12")
     contato = context.browser.find_element_by_name("contato")
     contato.send_keys("00078795455")
     cpf_cnpj = context.browser.find_element_by_name("cpf_cnpj")
-    cpf_cnpj.send_keys("01508754485")
+    cpf_cnpj.send_keys("00000000000")
     senha = context.browser.find_element_by_name("senha")
     senha.send_keys("123456")
 
@@ -37,7 +40,7 @@ def step_impl(context):
 @then("I create my profile")
 def step_impl(context):
     cliente = Cliente.objects.all()
-    assert cliente.filter(email="email001010231@email.com1")!=[]
+    assert cliente.filter(email="email001010231@email.com12")!=[]
 
 @then("go to my Profile View")
 def step_impl(context):

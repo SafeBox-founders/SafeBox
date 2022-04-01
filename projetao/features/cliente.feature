@@ -13,4 +13,4 @@ Feature: Test new cliente can be added in the Safebox
         Then I do not create my profile
         And stay in the Cadastrar Cliente View
     
-    
+    Scenario: Desactivate a existent client in the Safebox

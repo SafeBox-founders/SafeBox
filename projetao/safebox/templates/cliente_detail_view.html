@@ -1,6 +1,6 @@
 <html>
 <head>
-<title>{% block title %} Perfil {% endblock title %}</title>
+<title>{% block title %}Perfil{% endblock title %}</title>
 <h1>Perfil</h1>
 </head>
 <body>
@@ -12,6 +12,12 @@
     Senha: {{ data.senha }}<br/>
     Cadastrou-se em: {{ data.joined }}<br/>
     Última atualização: {{ data.updated }}<br/>
+    Status: {{ data.active }}<br/>
+
+    <form method="post">
+        {% csrf_token %}
+        <input type="submit" class="btn" value="Desativar Conta" name="desativar"/>
+    </form>
 </div>
 </body>
 </html>

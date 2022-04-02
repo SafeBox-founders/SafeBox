@@ -1,0 +1,20 @@
+<html>
+    <head>
+        <title>
+            {% block title %}
+                SafeBox
+            {% endblock title %}
+        </title>
+        <h1>Welcome to SafeBox</h1>
+    </head>
+
+    <body>
+        <div>
+            <h3>Email: {{ email }}</h3>
+            <form method="post">
+                {% csrf_token %}
+                <input type="submit" class="btn" value="Sair" name="sair"/>
+            </form>
+        </div>
+    </body>
+</html>

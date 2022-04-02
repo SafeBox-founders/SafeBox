@@ -19,3 +19,12 @@ Feature: Test new cliente can be added in the Safebox
         When I click Desativar Conta
         Then I deactivate my profile
         And go to Cadastrar Cliente view
+
+    Scenario: Edit an existing client in the Safebox
+        Given I am registered user
+        And I am at the profile view
+        When I click on Editar Conta
+        And I fill all fields
+        And I click on Editar
+        Then I go to my profile view
+        And I can see that my profile has changed

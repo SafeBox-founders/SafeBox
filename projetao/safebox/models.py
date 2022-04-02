@@ -41,7 +41,7 @@ class Cliente(models.Model):
     def set_contato(self, contato_p):
         self.contato = contato_p
 
-    def set_cnpj_cpf(self, cpf_cnpj_p):
+    def set_cpf_cnpj(self, cpf_cnpj_p):
         self.cpf_cnpj = cpf_cnpj_p
 
     def set_senha(self, senha_p):

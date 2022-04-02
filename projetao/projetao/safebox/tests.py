@@ -1,5 +1,5 @@
 from django.test import TestCase
-from .models import Cliente
+from safebox.models import Cliente
 import unittest
 from django.urls import reverse
 

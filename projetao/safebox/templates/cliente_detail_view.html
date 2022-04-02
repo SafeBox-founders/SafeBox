@@ -5,7 +5,7 @@
 </head>
 <body>
 <body>
-<div class="main">
+<div class="main" id="div_client_info">
     Email: {{ data.email }}<br/>
     Nome: {{ data.nome }}<br/>
     Contato: {{ data.contato }}<br/>
@@ -18,7 +18,13 @@
     <form method="post">
         {% csrf_token %}
         <input type="submit" class="btn" value="Desativar Conta" name="desativar"/>
+
     </form>
+    <form method="post">
+        {% csrf_token %}
+        <input type="submit" class="btn" value="Editar Conta" name="editar"/>
+    </form>
+
 </div>
 </body>
 </html>

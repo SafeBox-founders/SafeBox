@@ -1,0 +1,13 @@
+<html>
+<head>
+<title>{% block title %}Editar Perfil{% endblock title %}</title>
+<h1>Editar Perfil</h1>
+</head>
+<body>
+<form method="POST" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <input type="submit" value="Editar" name="editar"/>
+</form>
+</body>
+</html>

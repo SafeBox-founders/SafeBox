@@ -18,7 +18,13 @@
     <form method="post">
         {% csrf_token %}
         <input type="submit" class="btn" value="Desativar Conta" name="desativar"/>
+
     </form>
+    <form method="post">
+        {% csrf_token %}
+        <input type="submit" class="btn" value="Editar Conta" name="editar"/>
+    </form>
+
 </div>
 </body>
 </html>

@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect, HttpResponse
 
 from .models import Cliente
-from .forms import ClienteForm
+from .forms import ClienteForm, ClienteLoginForm
 
 def index(request):
     return HttpResponse("Safe Box")
@@ -53,4 +53,32 @@ def cliente_edit_view(request, email):
 
     return render(request, "cliente_edit_view.html", context)
 
+################## Cliente Login ##################################
 
+def cliente_login_view(request):
+    context = {}
+    try:
+        form = ClienteLoginForm(request.POST or None)
+        if form.is_valid():
+            email = request.POST["email"]
+            senha = request.POST["senha"]
+            usuario = Cliente.objects.get(email=email)
+
+            if usuario is not None:
+                usuario = autenticar(usuario, senha=senha)
+                if usuario is not None:
+                    return redirect('index')
+                else:
+                    context['message'] = "Senha incorreta!"
+    except Cliente.DoesNotExist:
+        context['message'] = "Não existe usuário com este email!"
+
+    context["form"] = form
+    return render(request, "cliente_login_view.html", context)
+
+def autenticar(usuario, senha):
+    if usuario.get_senha() == senha:
+        return usuario
+    else:
+        return None
+###################################################################

@@ -1,5 +1,6 @@
 import os
 import sys
+import pdb
 
 from time import sleep
 import django
@@ -22,8 +23,9 @@ def step_impl(context):
 @given("I fill all fields")
 def step_impl(context):
     cliente = Cliente.objects.all()
-    record = cliente[len(cliente) - 1]
-    variavel_id = record.id + 1
+    # record = cliente[len(cliente) - 1]
+    variavel_id = 10000000000+len(cliente)
+    # pdb.set_trace()
     nome = context.browser.find_element_by_name("nome")
     nome.send_keys("Testador")
     email = context.browser.find_element_by_name("email")
@@ -38,8 +40,7 @@ def step_impl(context):
 @when("I click on the Submit button")
 def step_impl(context):
     button = context.browser.find_element_by_name("cadastro")
-    button.submit()
-
+    button.click()
 
 @then("I create my profile")
 def step_impl(context):
@@ -50,8 +51,8 @@ def step_impl(context):
 
 @then("go to my Profile View")
 def step_impl(context):
-    assert context.browser.title=="Meu Perfil"
 
+    assert context.browser.title=="Meu Perfil"
 
 #=================================================================================================================
    
@@ -90,6 +91,8 @@ def step_impl(context):
     then I create my profile 
     and go to my Profile View
     """)
+
+
 @Given("I am at the profile view")
 def step_impl(context):
     assert context.browser.title == "Meu Perfil"
@@ -97,7 +100,7 @@ def step_impl(context):
 @When("I click Desativar Conta")
 def step_impl(context):
     button = context.browser.find_element_by_name("desativar")
-    button.submit()
+    button.click()
 
 @Then("I deactivate my profile")
 def step_impl(context):
@@ -108,3 +111,40 @@ def step_impl(context):
 def step_impl(context):
     assert context.browser.title == "Cadastrar-se"
 
+#EDITAR CONTA
+
+@When('I click on Editar Conta')
+def step_impl(context):
+    button = context.browser.find_element_by_name("editar")
+    button.click()
+
+@When('I fill all fields')
+def step_impl(context):
+    cliente = Cliente.objects.all()
+    record = cliente[len(cliente) - 1]
+    variavel_id = record.id + 2
+    nome = context.browser.find_element_by_name("nome")
+    nome.send_keys("Testador")
+    email = context.browser.find_element_by_name("email")
+    email.send_keys("email@email" + str(variavel_id) + ".com")
+    contato = context.browser.find_element_by_name("contato")
+    contato.send_keys("00078795455")
+    cpf_cnpj = context.browser.find_element_by_name("cpf_cnpj")
+    cpf_cnpj.send_keys(variavel_id)
+    senha = context.browser.find_element_by_name("senha")
+    senha.send_keys("123456")
+
+
+@When('I click on Editar')
+def step_impl(context):
+    button = context.browser.find_element_by_name("editar")
+    button.click()
+
+
+@Then('I go to my profile view')
+def step_impl(context):
+    pass
+
+@Then('I can see that my profile has changed')
+def step_impl(context):
+    pass

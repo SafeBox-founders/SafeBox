@@ -1,0 +1,21 @@
+<html>
+    <head>
+        <title id="cliente_login_page_view" name="cliente_login_page_view">
+            {% block title %}
+                Login
+            {% endblock title %}
+        </title>
+        <h1>Login</h1>
+    </head>
+
+    <body>
+        <form method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+            {{ form.as_p }}
+            {% if message %}
+                <script>alert('{{ message }}')</script>
+            {% endif %}
+            <input type="submit" value="Logar" name="logar"/>
+        </form>
+    </body>
+</html>

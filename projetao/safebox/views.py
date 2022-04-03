@@ -6,13 +6,17 @@ from .forms import ClienteForm, ClienteLoginForm
 def index(request):
     return HttpResponse("Safe Box")
 
-def home_view(request):
+def home_view(request, email):
+    context = {}
+    context["data"] = Cliente.objects.get(email=email)
     if request.method == "POST":
-        action = request.POST.get('sair')
-        if action == 'Sair':
-            redirect('sair')
-
-    return render(request, "home_view.html")
+        action_sair = request.POST.get('sair')
+        if action_sair == 'Sair':
+            return redirect('login')
+        action_visualizar = request.POST.get('visualizar')
+        if action_visualizar == "Visualizar Conta":
+            return redirect('visualizar', email)
+    return render(request, "home_view.html", context)
 
 def cliente_create_view(request):
     context = {}
@@ -20,7 +24,7 @@ def cliente_create_view(request):
     if form.is_valid():
         form.save()
         email = request.POST['email']
-        return redirect('visualizar',email)
+        return redirect('login')
     context["form"] = form
     return render(request, "cliente_create_view.html", context)
 
@@ -33,7 +37,7 @@ def cliente_detail_view(request, email):
         if action_desativar == 'Desativar Conta':
             context['data'].deactivate()
             context['data'].save()
-            return redirect('cadastrar')
+            return redirect('login')
 
         if action_editar == 'Editar Conta':
             context['data'].reactivate()
@@ -77,9 +81,14 @@ def cliente_login_view(request):
                     request.session['id'] = usuario.id
                     cliente_id = request.session['id']
                     session_state = {'email': usuario.get_email(), 'id':cliente_id}
-                    return render(request, 'home_view.html', session_state)
+                    return redirect('home', email)
                 else:
                     context['message'] = "Senha incorreta!"
+        elif request.method == 'POST':
+            action = request.POST.get('cadastrar')
+            if action == 'Cadastrar-se':
+                return redirect('cadastrar')
+
     except Cliente.DoesNotExist:
         context['message'] = "Não existe usuário com este email!"
 

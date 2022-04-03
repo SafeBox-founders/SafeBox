@@ -10,7 +10,7 @@
 
     <body>
         <div>
-            <h3>Email: {{ email }}</h3>
+            <h3 name="label_email_logged">Email: {{ email }}</h3>
             <form method="post">
                 {% csrf_token %}
                 <input type="submit" class="btn" value="Sair" name="sair"/>

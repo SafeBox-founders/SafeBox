@@ -61,7 +61,7 @@ def cliente_edit_view(request, email):
 
     return render(request, "cliente_edit_view.html", context)
 
-################## Cliente Login ##################################
+################## Cliente Login e session ##################################
 def cliente_login_view(request):
     context = {}
     try:
@@ -76,7 +76,6 @@ def cliente_login_view(request):
                 if usuario is not None:
                     request.session['id'] = usuario.id
                     cliente_id = request.session['id']
-                    print("Id do usuario", request.session['id'])
                     session_state = {'email': usuario.get_email(), 'id':cliente_id}
                     return render(request, 'home_view.html', session_state)
                 else:

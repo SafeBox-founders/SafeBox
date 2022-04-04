@@ -2,7 +2,7 @@ Feature: Login Cliente
   Como usuario do sistema
   Eu gostaria de fazer o login na minha conta
   Podendo assim ter acesso ao sistema como um todo
-
+  
   # TA_01
   Scenario: Login de usuario cadastrado
     Given Eu sou um usuario cadastrado
@@ -24,3 +24,4 @@ Feature: Login Cliente
     And Eu estou na tela de home
     When Eu pressiono o botao sair
     And Eu estou na tela de login
+  

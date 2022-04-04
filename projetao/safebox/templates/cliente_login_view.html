@@ -1,21 +1,60 @@
+{% load static %}
+
 <html>
     <head>
+        <!---bootstrap--->
+        <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+        <link rel="stylesheet" href="{% static 'fa/css/all.min.css' %}">
+        <script src="{% static 'js/bootstrap.min.js' %}"></script>
+        <!---custom css--->
+
+
         <title id="cliente_login_page_view" name="cliente_login_page_view">
             {% block title %}
                 Login
             {% endblock title %}
         </title>
-        <h1>Login</h1>
     </head>
 
-    <body>
-        <form method="POST" enctype="multipart/form-data">
-            {% csrf_token %}
-            {{ form.as_p }}
-            {% if message %}
+    <body class="text-center">
+
+        <style>
+            .fix-size {
+                width: 40%;
+            }
+            body {
+              color: #fff;
+              height: 100%;
+              background-color: #333;
+            }
+        </style>
+
+        <div class="container">
+
+            </br></br>
+            <center>
+                <img src="https://i.ibb.co/khhDS5w/logo-blue.png" class="img-fluid" alt="Responsive image" width="25%" height="25%" align="center">
+            </center>
+            </br></br>
+
+            <form method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+                {{ form.as_p }}
+                {% if message %}
                 <script>alert('{{ message }}')</script>
-            {% endif %}
-            <input type="submit" value="Logar" name="logar"/>
-        </form>
+                {% endif %}
+                <input type="submit" value="Logar" name="logar" class="btn btn-primary fix-size"/>
+            </form>
+
+            <form method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+                <input type="submit" value="Cadastrar-se" name="cadastrar" class="btn btn-light fix-size"/>
+            </form>
+
+            </br></br>
+
+        </div>
+
     </body>
+
 </html>

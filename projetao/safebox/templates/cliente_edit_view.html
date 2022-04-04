@@ -1,13 +1,70 @@
+{% load static %}
+
 <html>
-<head>
-<title>{% block title %}Editar Perfil{% endblock title %}</title>
-<h1>Editar Perfil</h1>
-</head>
-<body>
-<form method="POST" enctype="multipart/form-data">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <input type="submit" value="Editar" name="editar"/>
-</form>
-</body>
+    <head>
+
+        <!---bootstrap--->
+        <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+        <link rel="stylesheet" href="{% static 'fa/css/all.min.css' %}">
+        <script src="{% static 'js/bootstrap.min.js' %}"></script>
+
+        <title>
+            {% block title %}
+                Editar Perfil
+            {% endblock title %}
+        </title>
+
+    </head>
+
+    <body class="text-center">
+
+        <style>
+            .fix-size {
+                width: 40%;
+            }
+            body {
+              color: #fff;
+              height: 100%;
+              background-color: #333;
+              background-image: url(https://i.ibb.co/R0Kxjq5/logo-opac.png);
+              background-repeat: no-repeat;
+              background-position: bottom left;
+            }
+        </style>
+
+        <!--- nav bar --->
+
+        <nav class="navbar navbar-expand-lg navbar-dark" style="background-color: #386bc9">
+           <a class="navbar-brand" href="#">
+                <img src="https://i.ibb.co/6BsCFZr/logo-white.png" width="35" height="35" alt="">
+           </a>
+
+          <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+
+          <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+            <div class="navbar-nav">
+              <a class="nav-item nav-link active" href="#">Home <span class="sr-only">(current)</span></a>
+              <a class="nav-item nav-link" href="/visualizar/{{data.email}}">Perfil</a>
+              <a class="nav-item nav-link" href="#">Gerenciar câmeras</a>
+              <a class="nav-item nav-link" href="#">Relatórios</a>
+              <a class="nav-item nav-link" href="/">Sair</a>
+            </div>
+          </div>
+        </nav>
+
+        <div class="main">
+            </br></br></br></br>
+
+            <h1><img src="https://i.ibb.co/rvjrfTk/edit-icon.png" class="img-fluid" alt="Responsive image" width="3%" height="3%" align="center"> Editar perfil</h1>
+
+            </br>
+            <form method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+                {{ form.as_p}}
+                <input type="submit" class="btn btn-primary" value="Editar" name="editar"/>
+            </form>
+        </div>
+    </body>
 </html>

@@ -5,6 +5,9 @@ from . import views
 app_name = "safebox"
 
 urlpatterns=[
-    path("",views.cliente_create_view, name="cadastrar"),
-    path("<email>/",views.cliente_detail_view, name="visualizar")
+    path("cadastrar/", views.cliente_create_view, name="cadastrar"),
+    path("", views.cliente_login_view, name="login"),
+    path("home/<email>/", views.home_view, name="home"),
+    path("visualizar/<email>/", views.cliente_detail_view, name="visualizar"),
+    path("editar/<email>/", views.cliente_edit_view, name="editar")
 ]

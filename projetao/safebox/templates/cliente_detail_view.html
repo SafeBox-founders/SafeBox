@@ -1,24 +1,81 @@
-<html>
-<head>
-<title>{% block title %}Meu Perfil{% endblock title %}</title>
-<h1>Meu Perfil</h1>
-</head>
-<body>
-<body>
-<div class="main">
-    Email: {{ data.email }}<br/>
-    Nome: {{ data.nome }}<br/>
-    Contato: {{ data.contato }}<br/>
-    CPF|CNPJ: {{ data.cpf_cnpj }}<br/>
-    Senha: {{ data.senha }}<br/>
-    Cadastrou-se em: {{ data.joined }}<br/>
-    Última atualização: {{ data.updated }}<br/>
-    Status: {{ data.active }}<br/>
+{% load static %}
 
-    <form method="post">
-        {% csrf_token %}
-        <input type="submit" class="btn" value="Desativar Conta" name="desativar"/>
-    </form>
-</div>
-</body>
+<html>
+    <head>
+
+        <!---bootstrap--->
+        <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+        <link rel="stylesheet" href="{% static 'fa/css/all.min.css' %}">
+        <script src="{% static 'js/bootstrap.min.js' %}"></script>
+
+        <title>
+            {% block title %}
+                Meu Perfil
+            {% endblock title %}
+        </title>
+    </head>
+
+    <body class="text-center">
+
+        <style>
+            .fix-size {
+                width: 40%;
+            }
+            body {
+              color: #fff;
+              height: 100%;
+              background-color: #333;
+              background-image: url(https://i.ibb.co/R0Kxjq5/logo-opac.png);
+              background-repeat: no-repeat;
+              background-position: bottom left;
+            }
+        </style>
+
+        <!--- nav bar --->
+
+        <nav class="navbar navbar-expand-lg navbar-dark" style="background-color: #386bc9">
+           <a class="navbar-brand" href="#">
+                <img src="https://i.ibb.co/6BsCFZr/logo-white.png" width="35" height="35" alt="">
+           </a>
+
+          <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+
+          <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+            <div class="navbar-nav">
+              <a class="nav-item nav-link active" href="#">Home <span class="sr-only">(current)</span></a>
+              <a class="nav-item nav-link" href="/visualizar/{{data.email}}">Perfil</a>
+              <a class="nav-item nav-link" href="#">Gerenciar câmeras</a>
+              <a class="nav-item nav-link" href="#">Relatórios</a>
+              <a class="nav-item nav-link" href="/">Sair</a>
+            </div>
+          </div>
+        </nav>
+
+        <div class="main" id="div_client_info">
+            </br></br></br></br>
+            <h1>Perfil</h1>
+            <b>Email:</b> {{ data.email }}<br/>
+            <b>Nome:</b> {{ data.nome }}<br/>
+            <b>Contato:</b> {{ data.contato }}<br/>
+            <b>CPF | CNPJ:</b> {{ data.cpf_cnpj }}<br/>
+            <b>Senha:</b> {{ data.senha }}<br/>
+            <b>Cadastrou-se em:</b> {{ data.joined }}<br/>
+            <b>Última atualização:</b> {{ data.updated }}<br/>
+            <b>Ativo:</b> {{ data.active }}<br/>
+
+            </br></br>
+
+            <form method="post">
+                {% csrf_token %}
+                <input type="submit" class="btn btn-danger" value="Desativar Conta" name="desativar"/>
+            </form>
+            <form method="post">
+                {% csrf_token %}
+                <input type="submit" class="btn btn-primary" value="Editar Conta" name="editar"/>
+            </form>
+
+        </div>
+    </body>
 </html>

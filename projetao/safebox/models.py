@@ -11,12 +11,41 @@ class Cliente(models.Model):
     updated = models.DateTimeField(auto_now=True)
     active = models.BooleanField(default=True)
 
-
     def __str__(self):
         return self.email
 
     def get_absolute_url(self):
         return reverse('visualizar',kwargs={"str":self.email})
+
+    def get_nome(self):
+        return self.nome
+
+    def get_email(self):
+        return self.email
+
+    def get_contato(self):
+        return self.contato
+
+    def get_cpf_cnpj(self):
+        return self.cpf_cnpj
+
+    def get_senha(self):
+        return self.senha
+
+    def set_nome(self, nome_p):
+        self.nome = nome_p
+
+    def set_email(self, email_p):
+        self.email = email_p
+
+    def set_contato(self, contato_p):
+        self.contato = contato_p
+
+    def set_cpf_cnpj(self, cpf_cnpj_p):
+        self.cpf_cnpj = cpf_cnpj_p
+
+    def set_senha(self, senha_p):
+        self.senha = senha_p
 
     def deactivate(self):
         self.active = False

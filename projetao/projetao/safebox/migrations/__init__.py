@@ -1,1 +1,0 @@
-#Tratar diretório como pacote

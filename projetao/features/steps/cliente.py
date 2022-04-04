@@ -19,6 +19,8 @@ use_step_matcher("re")
 def step_impl(context):
     context.browser = webdriver.Chrome()
     context.browser.get("http://127.0.0.1:8000/")
+    button = context.browser.find_element_by_name("cadastrar")
+    button.click()
 
 @given("I fill all fields")
 def step_impl(context):
@@ -46,9 +48,9 @@ def step_impl(context):
     variavel_id = 10000000000+len(cliente)+1
     assert cliente.filter(email=("email@" + str(variavel_id) + ".com"))  != []
 
-@then("go to my Profile View")
+@then("I go to Login page")
 def step_impl(context):
-    assert context.browser.title=="Meu Perfil"
+    assert context.browser.title=="Login"
 
 #=================================================================================================================
    
@@ -81,17 +83,18 @@ def step_impl(context):
 @Given("I am registered user")
 def step_impl(context):
     context.execute_steps(u"""
-    given I am on the Cadastrar Cliente View
-    and I fill all fields
-    when I click on the Submit button
-    then I create my profile 
-    and go to my Profile View
-    """)
+    given Eu sou um usuario cadastrado
+    and Eu estou na tela de login
+    and Eu preencho o campo email e senha
+    when Eu pressiono o botao "Logar"
+    then Eu vejo que estou logado""")
 
 
-@Given("I am at the profile view")
+@Given("I access the profile view")
 def step_impl(context):
-    assert context.browser.title == "Meu Perfil"
+    button = context.browser.find_element_by_name("visualizar_perfil")
+    button.click()
+    context.browser.title == "Meu Perfil"
 
 @When("I click Desativar Conta")
 def step_impl(context):
@@ -123,8 +126,9 @@ def step_impl(context):
     atts_dictionary = {'Email': "email@" + str(variavel_id) + ".com",
                        'Nome': 'Testador_editado',
                        'Contato': str(variavel_id),
-                       'CPF|CNPJ': str(variavel_id),
-                       'Senha': '654321'}
+                       'CPF | CNPJ': str(variavel_id),
+                       'Senha': '654321',
+                       'Ativo': True}
 
     nome = context.browser.find_element_by_name("nome")
     nome.clear()
@@ -137,7 +141,7 @@ def step_impl(context):
     contato.send_keys(atts_dictionary['Contato'])
     cpf_cnpj = context.browser.find_element_by_name("cpf_cnpj")
     cpf_cnpj.clear()
-    cpf_cnpj.send_keys(atts_dictionary['CPF|CNPJ'])
+    cpf_cnpj.send_keys(atts_dictionary['CPF | CNPJ'])
     senha = context.browser.find_element_by_name("senha")
     senha.clear()
     senha.send_keys(atts_dictionary['Senha'])
@@ -155,10 +159,14 @@ def step_impl(context):
 def step_impl(context):
     div = context.browser.find_element_by_id("div_client_info")
     textos = (div.text).split("\n")
-    atts_dictionary_novo = {textos[i].split(": ")[0]: textos[i].split(": ")[1] for i in range(len(textos))}
+    atts_dictionary_novo = {}
+    for i in range(len(textos)):
+        if(textos[i] != "" and (":" in textos[i])):
+            atts_dictionary_novo[textos[i].split(": ")[0]] = textos[i].split(": ")[1]
+    #atts_dictionary_novo = {textos[i].split(": ")[0]: textos[i].split(": ")[1] for i in range(len(textos))}
     atts_dictionary_novo.pop('Cadastrou-se em')
     atts_dictionary_novo.pop('Última atualização')
-    atts_dictionary_novo.pop('Status')
+    atts_dictionary_novo.pop('Ativo')
     for key in atts_dictionary_novo.keys():
         assert atts_dictionary_novo[key] == atts_dictionary[key]
 

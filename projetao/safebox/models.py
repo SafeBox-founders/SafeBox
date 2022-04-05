@@ -1,3 +1,4 @@
+from asyncio.windows_events import NULL
 from django.db import models
 from django.urls import reverse
 
@@ -55,3 +56,19 @@ class Cliente(models.Model):
 
     def get_active(self):
         return self.active
+
+class Plano(models.Model):
+    nome = models.CharField(max_length=255,null=False, unique=True)
+    valor = models.FloatField(null=False)
+    relatorio = models.BooleanField(null=False)
+    numero_cameras = models.IntegerField(null=False)
+    numero_boundingbox = models.IntegerField(null=False)
+
+    def __str__(self):
+        return self.nome
+
+class Assinatura(models.Model):
+    cliente_id = models.ForeignKey(Cliente, to_field="id", on_delete=models.CASCADE)
+    plano_id = models.ForeignKey(Plano, to_field="id",on_delete=models.CASCADE)
+    data_de_pagamento = models.DateTimeField(auto_now_add=True)
+    pagamento_status = models.BooleanField(null=False, default=False)

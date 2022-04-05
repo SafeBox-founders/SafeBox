@@ -72,3 +72,12 @@ class Assinatura(models.Model):
     plano_id = models.ForeignKey(Plano, to_field="id",on_delete=models.CASCADE)
     data_de_pagamento = models.DateTimeField(auto_now_add=True)
     pagamento_status = models.BooleanField(null=False, default=False)
+
+class Ambiente(models.Model):
+    cliente_id = models.ForeignKey(Cliente, to_field="id", on_delete=models.CASCADE)
+    nome = models.CharField(max_length=255, null=False)
+    numero_cameras = models.IntegerField(null=False,default=0)
+
+    def __str__(self):
+        return self.nome
+    

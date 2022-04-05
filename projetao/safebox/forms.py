@@ -1,6 +1,6 @@
 from unicodedata import name
 from django import forms
-from .models import Assinatura, Cliente, Plano
+from .models import Ambiente, Assinatura, Cliente, Plano
 
 class ClienteForm(forms.ModelForm):
     class Meta:
@@ -19,3 +19,9 @@ class AssinaturaForm(forms.ModelForm):
     def __init__(self,*args,**kwargs):
         super(AssinaturaForm,self).__init__(*args,**kwargs)
         self.fields["plano_id"].queryset = Plano.objects.all()
+
+class AmbienteForm(forms.ModelForm):
+    class Meta:
+        model = Ambiente
+        fields = ['nome','cliente_id','numero_cameras']
+        widgets = {'cliente_id':forms.HiddenInput(), 'numero_cameras':forms.HiddenInput()}

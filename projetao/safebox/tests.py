@@ -1,5 +1,7 @@
+from asyncio.windows_events import NULL
+from curses.ascii import NUL
 from django.test import TestCase
-from .models import Cliente
+from .models import Cliente, Plano, Assinatura
 import unittest
 from django.urls import reverse
 
@@ -69,3 +71,43 @@ class ClienteTest(TestCase):
         cliente = Cliente.objects.get(cpf_cnpj="00000000000")
         cliente.set_senha(nova_senha)
         self.assertEqual(cliente.get_senha(), nova_senha)
+
+class PlanoTest(TestCase):
+    def setUp(self):
+        self.plano = Plano()
+        self.plano.nome = "Básico"
+        self.plano.valor = 50.00
+        self.plano.relatorio = False
+        self.plano.numero_cameras = 1
+        self.plano.numero_boundingbox = 3
+        self.plano.save()
+        
+    def tearDown(self):
+        plano = Plano.objects.get(nome="Básico")
+        Plano.delete(plano)
+
+    def test_fields(self):
+        record = Plano.objects.get(nome="Básico")
+        self.assertEqual(self.plano,record)
+    
+class AssinaturaTest(TestCase):
+    def setUp(self):
+        self.assinatura = Assinatura()
+        cliente = Cliente.objects.create(nome="testador",email="teste@gmail.com",contato="00000000000",cpf_cnpj="00000000000",senha="123456")
+        plano = Plano.objects.create(nome="Básico", valor=50.00, relatorio =False, numero_cameras=1, numero_boundingbox=3)
+        self.assinatura = Assinatura.objects.create(cliente_id = cliente, plano_id = plano, data_de_pagamento=None,pagamento_status=False)
+        
+
+    def tearDown(self):
+        cliente = Cliente.objects.get(email="teste@gmail.com")
+        assinatura = Assinatura.objects.get(cliente_id=cliente.id)
+        Assinatura.delete(assinatura)
+        plano = Plano.objects.get(nome="Básico")
+        Plano.delete(plano)
+        cliente = Cliente.objects.get(email="teste@gmail.com")
+        Cliente.delete(cliente)
+
+    def test_fields(self):
+        cliente = Cliente.objects.get(email="teste@gmail.com")
+        record = Assinatura.objects.get(cliente_id=cliente.id)
+        self.assertEqual(self.assinatura,record)

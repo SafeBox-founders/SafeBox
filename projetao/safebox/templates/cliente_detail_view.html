@@ -75,7 +75,10 @@
                 {% csrf_token %}
                 <input type="submit" class="btn btn-primary" value="Editar Conta" name="editar"/>
             </form>
-
+            <form method="post">
+                {% csrf_token %}
+                <input type="submit" class="btn btn-primary" value="Assinar plano" name="assinar"/>
+            </form>
         </div>
     </body>
 </html>

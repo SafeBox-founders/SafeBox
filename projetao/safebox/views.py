@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect, HttpResponse
 
-from .models import Cliente
-from .forms import ClienteForm, ClienteLoginForm
+from .models import Cliente, Assinatura, Plano
+from .forms import AssinaturaForm, ClienteForm, ClienteLoginForm
 
 def index(request):
     return HttpResponse("Safe Box")
@@ -34,6 +34,7 @@ def cliente_detail_view(request, email):
     if request.method == 'POST':
         action_desativar = request.POST.get('desativar')
         action_editar = request.POST.get('editar')
+        action_assinar = request.POST.get('assinar')
         if action_desativar == 'Desativar Conta':
             context['data'].deactivate()
             context['data'].save()
@@ -43,6 +44,9 @@ def cliente_detail_view(request, email):
             context['data'].reactivate()
             context['data'].save()
             return redirect('editar',context['data'].get_email())
+
+        if(action_assinar == "Assinar plano"):
+            return redirect('assinar_plano',context['data'].get_email())
 
     return render(request, "cliente_detail_view.html", context)
 
@@ -112,3 +116,19 @@ def sair(request):
 
     return redirect('login')
 ###################################################################
+
+def assinatura_create_view(request, email):
+    context = {}
+    cliente = Cliente.objects.get(email=email)
+    form = AssinaturaForm(request.POST or None, initial={"cliente_id":cliente.id})
+    if form.is_valid():
+        form.save()
+        return redirect('visualizar',email)
+    
+    planos = Plano.objects.all()
+    context = {
+        'form': form,
+        'planos': planos
+    }
+
+    return render(request, "assinatura_create_view.html", context)

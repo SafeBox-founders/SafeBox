@@ -1,0 +1,38 @@
+[
+    {
+        "model": "safebox.Plano",
+        "pk":1,
+        "fields":{
+            "nome":"Básico",
+            "valor":50.00,
+            "relatorio": false,
+            "numero_cameras":1,
+            "numero_boundingbox":3
+        }
+    
+    },
+    {
+        "model": "safebox.Plano",
+        "pk": 2,
+        "fields":{
+            "nome":"Premium",
+            "valor":100.00,
+            "relatorio": true,
+            "numero_cameras":3,
+            "numero_boundingbox":9
+        }
+    
+    },
+    {
+        "model": "safebox.Plano",
+        "pk": 3,
+        "fields":{
+            "nome":"Pro",
+            "valor":200.00,
+            "relatorio": true,
+            "numero_cameras":999,
+            "numero_boundingbox":999
+        }
+    
+    }
+]

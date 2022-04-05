@@ -52,3 +52,6 @@ class Cliente(models.Model):
 
     def reactivate(self):
         self.active = True
+
+    def get_active(self):
+        return self.active

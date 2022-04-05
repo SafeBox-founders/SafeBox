@@ -74,8 +74,11 @@ def cliente_login_view(request):
             email = request.POST["email"]
             senha = request.POST["senha"]
             usuario = Cliente.objects.get(email=email)
-
             if usuario is not None:
+                if usuario.get_active() == False:
+                    context['message'] = "Esse perfil de usuário está desativado!"
+                    context["form"] = form
+                    return render(request, "cliente_login_view.html", context)
                 usuario = autenticar(usuario, senha=senha)
                 if usuario is not None:
                     request.session['id'] = usuario.id

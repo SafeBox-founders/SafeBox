@@ -4,7 +4,7 @@ from .models import Cliente
 class ClienteForm(forms.ModelForm):
     class Meta:
         model = Cliente
-        fields = "__all__"
+        fields = ["nome","email","contato","cpf_cnpj","senha"]
 
 class ClienteLoginForm(forms.Form):
     email = forms.CharField(max_length=255, widget=forms.EmailInput)

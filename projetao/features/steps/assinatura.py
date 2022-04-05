@@ -40,3 +40,8 @@ def step_impl(context):
 def step_impl(context):
     button = context.browser.find_element_by_name("assinar")
     button.click()
+
+@Then("I assigned my plan")
+def step_impl(context):
+    assinatura = Assinatura.objects.all()
+    assert assinatura.filter(plano_id=1) != []

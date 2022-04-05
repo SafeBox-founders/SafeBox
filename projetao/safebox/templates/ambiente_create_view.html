@@ -9,10 +9,9 @@
 
         <title>
             {% block title %}
-                SafeBox
+                Criar Ambiente
             {% endblock title %}
         </title>
-
     </head>
 
     <body class="text-center">
@@ -51,21 +50,20 @@
               <a class="nav-item nav-link" href="/" name="sair">Sair</a>
             </div>
           </div>
-
         </nav>
 
-        <div class="container">
-                </br></br>
-                <img src="https://i.ibb.co/TbTQsxw/user-icon.png" class="img-fluid" alt="Responsive image" width="10%" height="10%" align="center">
-                <h1>Usuário logado com sucesso!</h1>
-                <h5 name="label_email_logged">Email: {{ data.email }}</h5>
+        <div class="main">
+            </br></br></br></br>
 
-                <!---
-                <form method="post">
-                    {% csrf_token %}
-                    <input type="submit" class="btn" value="Sair" name="sair"/>
-                </form>
-                --->
+            <h1><img src="https://i.ibb.co/j4r9LhM/cad-icon.png" class="img-fluid" alt="Responsive image" width="3%" height="3%" align="center"> Criar Ambiente</h1>
+
+            </br>
+            <form method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <input type="submit" class="btn btn-primary" value="Criar" name="criar"/>
+            </form>
         </div>
+
     </body>
 </html>

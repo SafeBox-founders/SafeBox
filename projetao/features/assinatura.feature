@@ -5,3 +5,4 @@ Feature: Assign a plan to my user account
         And I chose my plan 
         And I click on the Assinar button
         Then I go to my profile view
+        And I assigned my plan

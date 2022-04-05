@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect, HttpResponse
 
-from .models import Cliente, Assinatura, Plano
-from .forms import AssinaturaForm, ClienteForm, ClienteLoginForm
+from .models import Cliente, Assinatura, Plano, Ambiente
+from .forms import AssinaturaForm, ClienteForm, ClienteLoginForm, AmbienteForm
 
 def index(request):
     return HttpResponse("Safe Box")
@@ -132,3 +132,25 @@ def assinatura_create_view(request, email):
     }
 
     return render(request, "assinatura_create_view.html", context)
+
+def ambiente_list_view(request,email):
+    context = {}
+    cliente = Cliente.objects.get(email=email)
+    ambientes = Ambiente.objects.all()
+    ambientes.filter(cliente_id=cliente.id)
+    context['ambientes'] = []
+    if ambientes != None and ambientes != []:
+        context['ambientes']=ambientes
+    if request.method == "POST":
+        return redirect('criar_ambiente',email)
+    return render(request, "ambiente_list_view.html", context)
+
+def ambiente_create_view(request,email):
+    context = {}
+    cliente = Cliente.objects.get(email=email)
+    form = AmbienteForm(request.POST or None, initial={"cliente_id":cliente.id})
+    if form.is_valid():
+        form.save()
+        return redirect('ambientes',email)
+    context = {'form': form}
+    return render(request, "ambiente_create_view.html", context)

@@ -1,7 +1,7 @@
 from asyncio.windows_events import NULL
 from curses.ascii import NUL
 from django.test import TestCase
-from .models import Cliente, Plano, Assinatura
+from .models import Cliente, Plano, Assinatura, Ambiente
 import unittest
 from django.urls import reverse
 
@@ -111,3 +111,14 @@ class AssinaturaTest(TestCase):
         cliente = Cliente.objects.get(email="teste@gmail.com")
         record = Assinatura.objects.get(cliente_id=cliente.id)
         self.assertEqual(self.assinatura,record)
+
+class AmbienteTest(TestCase):
+    def setUp(self):
+        self.ambiente = Ambiente()
+        cliente = Cliente.objects.create(nome="testador",email="teste@gmail.com",contato="00000000000",cpf_cnpj="00000000000",senha="123456")
+        self.ambiente = Ambiente.objects.create(cliente_id = cliente, nome = "Ambiente de teste", numero_cameras=0)
+
+    def test_fields(self):
+        cliente = Cliente.objects.get(email="teste@gmail.com")
+        record = Ambiente.objects.get(cliente_id=cliente.id)
+        self.assertEqual(self.ambiente,record)     

@@ -19,24 +19,24 @@
 
         <style>
             .fix-size {
-                width: 40%;
+                width: 100%;
             }
             body {
               color: #fff;
               height: 100%;
               background-color: #333;
-              background-image: url(https://i.ibb.co/R0Kxjq5/logo-opac.png);
+              background-image: url(https://i.ibb.co/pXn5JPj/background.png);
               background-repeat: no-repeat;
               background-position: bottom left;
+            }
+            .special-card {
+              opacity: .7;
             }
         </style>
 
         <!--- nav bar --->
 
         <nav class="navbar navbar-expand-lg navbar-dark" style="background-color: #386bc9">
-           <a class="navbar-brand" href="#">
-                <img src="https://i.ibb.co/6BsCFZr/logo-white.png" width="35" height="35" alt="">
-           </a>
 
           <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
@@ -53,32 +53,50 @@
           </div>
         </nav>
 
-        <div class="main" id="div_client_info">
-            </br></br></br></br>
-            <h1>Perfil</h1>
-            <b>Email:</b> {{ data.email }}<br/>
-            <b>Nome:</b> {{ data.nome }}<br/>
-            <b>Contato:</b> {{ data.contato }}<br/>
-            <b>CPF | CNPJ:</b> {{ data.cpf_cnpj }}<br/>
-            <b>Senha:</b> {{ data.senha }}<br/>
-            <b>Cadastrou-se em:</b> {{ data.joined }}<br/>
-            <b>Última atualização:</b> {{ data.updated }}<br/>
-            <b>Ativo:</b> {{ data.active }}<br/>
+        </br></br></br></br></br>
 
-            </br></br>
-
-            <form method="post">
-                {% csrf_token %}
-                <input type="submit" class="btn btn-danger" value="Desativar Conta" name="desativar"/>
-            </form>
-            <form method="post">
-                {% csrf_token %}
-                <input type="submit" class="btn btn-primary" value="Editar Conta" name="editar"/>
-            </form>
-            <form method="post">
-                {% csrf_token %}
-                <input type="submit" class="btn btn-primary" value="Assinar plano" name="assinar"/>
-            </form>
+        <div class="container">
+            <div class ="row justify-content-center">
+                <img src="https://i.ibb.co/1KkL6Tv/perfil.png" class="img-fluid" alt="Responsive image" width="30%" height="30%" align="center">
+            </div>
         </div>
+
+        </br>
+
+        <div class="row justify-content-center">
+            <div class="col-sm-6 card text-blue bg-dark mb-3 special-card" style="max-width: 23rem;">
+              <div class="card-body">
+                  <div class="main" id="div_client_info">
+                        <b>Email:</b> {{ data.email }}<br/>
+                        <b>Nome:</b> {{ data.nome }}<br/>
+                        <b>Contato:</b> {{ data.contato }}<br/>
+                        <b>CPF | CNPJ:</b> {{ data.cpf_cnpj }}<br/>
+                        <b>Senha:</b> {{ data.senha }}<br/>
+                        <b>Cadastrou-se em:</b> {{ data.joined }}<br/>
+                        <b>Última atualização:</b> {{ data.updated }}<br/>
+                        <b>Ativo:</b> {{ data.active }}<br/>
+                    </div>
+              </div>
+            </div>
+        </div>
+
+        <div class="row justify-content-center">
+            <div class="center">
+                <form method="post">
+                    {% csrf_token %}
+                    <input type="submit" class="btn btn-danger fix-size" value="Desativar Conta" name="desativar"/>
+                </form>
+                <form method="post">
+                    {% csrf_token %}
+                    <input type="submit" class="btn btn-primary fix-size" value="Editar Conta" name="editar"/>
+                </form>
+                <form method="post">
+                    {% csrf_token %}
+                    <input type="submit" class="btn btn-primary fix-size" value="Assinar plano" name="assinar"/>
+                </form>
+            </div>
+        </div>
+
+
     </body>
 </html>

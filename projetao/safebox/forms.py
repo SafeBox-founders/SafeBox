@@ -5,7 +5,7 @@ from .models import Ambiente, Assinatura, Cliente, Plano
 class ClienteForm(forms.ModelForm):
     class Meta:
         model = Cliente
-        fields = ["nome","email","contato","cpf_cnpj","senha"]
+        fields = ["nome", "email", "contato", "cpf_cnpj", "senha"]
 
 class ClienteLoginForm(forms.Form):
     email = forms.CharField(max_length=255, widget=forms.EmailInput)

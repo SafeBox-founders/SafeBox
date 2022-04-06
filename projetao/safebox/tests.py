@@ -1,5 +1,3 @@
-from asyncio.windows_events import NULL
-from curses.ascii import NUL
 from django.test import TestCase
 from .models import Cliente, Plano, Assinatura, Ambiente
 import unittest

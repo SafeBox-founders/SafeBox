@@ -1,4 +1,5 @@
 {% load static %}
+{% load crispy_forms_tags %}
 
 <html>
     <head>
@@ -16,17 +17,17 @@
 
     </head>
 
-    <body class="text-center">
+    <body>
 
         <style>
             .fix-size {
-                width: 40%;
+                width: 100%;
             }
             body {
               color: #fff;
               height: 100%;
               background-color: #333;
-              background-image: url(https://i.ibb.co/R0Kxjq5/logo-opac.png);
+              background-image: url(https://i.ibb.co/pXn5JPj/background.png);
               background-repeat: no-repeat;
               background-position: bottom left;
             }
@@ -35,9 +36,6 @@
         <!--- nav bar --->
 
         <nav class="navbar navbar-expand-lg navbar-dark" style="background-color: #386bc9">
-           <a class="navbar-brand" href="#">
-                <img src="https://i.ibb.co/6BsCFZr/logo-white.png" width="35" height="35" alt="">
-           </a>
 
           <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
@@ -54,17 +52,26 @@
           </div>
         </nav>
 
-        <div class="main">
-            </br></br></br></br>
+                </br></br>
 
-            <h1><img src="https://i.ibb.co/rvjrfTk/edit-icon.png" class="img-fluid" alt="Responsive image" width="3%" height="3%" align="center"> Editar perfil</h1>
+        <div class="container">
+            <div class ="row justify-content-center">
+                <img src="https://i.ibb.co/hmcMzDj/editar.png" class="img-fluid" alt="Responsive image" width="30%" height="30%" align="center">
+            </div>
+        </div>
 
-            </br>
+        </br></br>
+
+        <div class="container">
+            <div class="row justify-content-center">
+
             <form method="POST" enctype="multipart/form-data">
                 {% csrf_token %}
-                {{ form.as_p}}
-                <input type="submit" class="btn btn-primary" value="Editar" name="editar"/>
+                {{ form|crispy}}
+                <input type="submit" class="btn btn-primary fix-size" value="Editar" name="editar"/>
             </form>
+            </div>
         </div>
+
     </body>
 </html>

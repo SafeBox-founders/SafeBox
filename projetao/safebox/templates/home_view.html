@@ -25,18 +25,18 @@
               color: #fff;
               height: 100%;
               background-color: #333;
-              background-image: url(https://i.ibb.co/R0Kxjq5/logo-opac.png);
+              background-image: url(https://i.ibb.co/pXn5JPj/background.png);
               background-repeat: no-repeat;
               background-position: bottom left;
+            }
+            .special-card {
+              opacity: .8;
             }
         </style>
 
         <!--- nav bar --->
 
         <nav class="navbar navbar-expand-lg navbar-dark" style="background-color: #386bc9">
-           <a class="navbar-brand" href="#">
-                <img src="https://i.ibb.co/6BsCFZr/logo-white.png" width="35" height="35" alt="">
-           </a>
 
           <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
@@ -56,16 +56,31 @@
 
         <div class="container">
                 </br></br>
-                <img src="https://i.ibb.co/TbTQsxw/user-icon.png" class="img-fluid" alt="Responsive image" width="10%" height="10%" align="center">
-                <h1>Usuário logado com sucesso!</h1>
-                <h5 name="label_email_logged">Email: {{ data.email }}</h5>
-
-                <!---
-                <form method="post">
-                    {% csrf_token %}
-                    <input type="submit" class="btn" value="Sair" name="sair"/>
-                </form>
-                --->
+                <img src="https://i.ibb.co/gy7H6Rj/logado.png" class="img-fluid" alt="Responsive image" width="70%" height="70%" align="center">
+                </br></br>
+                <h5 name="label_email_logged"><b>Email:</b> {{ data.email }}</h5>
         </div>
+
+        </br></br>
+
+        <div class="row justify-content-center">
+            <div class="col-sm-6 card text-white bg-dark mb-3 special-card  " style="max-width: 23rem;">
+              <img class="card-img-top" src="https://i.ibb.co/qy2Q8sz/feedback.png" alt="Card image cap">
+              <div class="card-body">
+                <p class="card-text">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin vestibulum, tortor pretium hendrerit fringilla, nisi eros rhoncus enim, et porta augue nibh eget dui. Ut tempus nisi quis augue mattis feugiat. In gravida magna id ullamcorper porttitor. Pellentesque ut efficitur orci. Vestibulum consequat ut quam eu mattis. Maecenas id semper.</p>
+              </div>
+            </div>
+
+            <div class="col-sm-6" style="max-width: 1rem;"></div>
+
+            <div class="col-sm-6 card text-white bg-dark mb-3 special-card " style="max-width: 23rem;">
+              <img class="card-img-top" src="https://i.ibb.co/pXdnqfk/dicas.png" alt="Card image cap">
+              <div class="card-body">
+                <p class="card-text">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin vestibulum, tortor pretium hendrerit fringilla, nisi eros rhoncus enim, et porta augue nibh eget dui. Ut tempus nisi quis augue mattis feugiat. In gravida magna id ullamcorper porttitor. Pellentesque ut efficitur orci. Vestibulum consequat ut quam eu mattis. Maecenas id semper.</p>
+              </div>
+            </div>
+        </div>
+
+
     </body>
 </html>

@@ -1,4 +1,5 @@
 {% load static %}
+{% load crispy_forms_tags %}
 
 <html>
     <head>
@@ -20,12 +21,15 @@
 
         <style>
             .fix-size {
-                width: 40%;
+                width: 100%;
             }
             body {
               color: #fff;
               height: 100%;
               background-color: #333;
+              background-image: url(https://i.ibb.co/jZ4HHbj/back-login.png);
+              background-repeat: no-repeat;
+              background-position: bottom left;
             }
         </style>
 
@@ -36,20 +40,23 @@
                 <img src="https://i.ibb.co/khhDS5w/logo-blue.png" class="img-fluid" alt="Responsive image" width="25%" height="25%" align="center">
             </center>
             </br></br>
+            <div class ="row justify-content-center">
+                <form method="POST" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    {{ form|crispy }}
+                    {% if message %}
+                    <script>alert('{{ message }}')</script>
+                    {% endif %}
+                    <input type="submit" value="Logar" name="logar" class="btn btn-primary"/>
+                </form>
+            </div>
 
-            <form method="POST" enctype="multipart/form-data">
-                {% csrf_token %}
-                {{ form.as_p }}
-                {% if message %}
-                <script>alert('{{ message }}')</script>
-                {% endif %}
-                <input type="submit" value="Logar" name="logar" class="btn btn-primary fix-size"/>
-            </form>
-
-            <form method="POST" enctype="multipart/form-data">
-                {% csrf_token %}
-                <input type="submit" value="Cadastrar-se" name="cadastrar" class="btn btn-light fix-size"/>
-            </form>
+             <div class ="row justify-content-center">
+                <form method="POST" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <input type="submit" value="Cadastrar-se" name="cadastrar" class="btn btn-light"/>
+                </form>
+            </div>
 
             </br></br>
 

@@ -119,38 +119,36 @@ def sair(request):
 
 def assinatura_create_view(request, email):
     context = {}
-    cliente = Cliente.objects.get(email=email)
-    form = AssinaturaForm(request.POST or None, initial={"cliente_id":cliente.id})
+    context['data'] = Cliente.objects.get(email=email)
+    form = AssinaturaForm(request.POST or None, initial={"cliente_id":context['data'].id})
     if form.is_valid():
         form.save()
         return redirect('visualizar',email)
     
     planos = Plano.objects.all()
-    context = {
-        'form': form,
-        'planos': planos
-    }
+    context['form'] = form
+    context['planos'] = planos
 
     return render(request, "assinatura_create_view.html", context)
 
 def ambiente_list_view(request,email):
     context = {}
-    cliente = Cliente.objects.get(email=email)
+    context['data'] = Cliente.objects.get(email=email)
     ambientes = Ambiente.objects.all()
-    ambientes.filter(cliente_id=cliente.id)
-    context['ambientes'] = []
-    if ambientes != None and ambientes != []:
-        context['ambientes']=ambientes
+    ambiente = ambientes.filter(cliente_id=context['data'].id)
+    context['ambientes'] =[]
+    if ambiente != None and ambiente != []:
+        context['ambientes']=ambiente
     if request.method == "POST":
         return redirect('criar_ambiente',email)
     return render(request, "ambiente_list_view.html", context)
 
 def ambiente_create_view(request,email):
     context = {}
-    cliente = Cliente.objects.get(email=email)
-    form = AmbienteForm(request.POST or None, initial={"cliente_id":cliente.id})
+    context['data'] = Cliente.objects.get(email=email)
+    form = AmbienteForm(request.POST or None, initial={"cliente_id":context['data'].id})
     if form.is_valid():
         form.save()
         return redirect('ambientes',email)
-    context = {'form': form}
+    context['form'] = form
     return render(request, "ambiente_create_view.html", context)

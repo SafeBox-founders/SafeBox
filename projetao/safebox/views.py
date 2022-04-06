@@ -1,5 +1,6 @@
 from django.shortcuts import render, redirect, HttpResponse
-
+from django.core.exceptions import ValidationError
+from django.contrib import messages
 from .models import Cliente, Assinatura, Plano, Ambiente
 from .forms import AssinaturaForm, ClienteForm, ClienteLoginForm, AmbienteForm
 
@@ -121,7 +122,16 @@ def assinatura_create_view(request, email):
     context = {}
     context['data'] = Cliente.objects.get(email=email)
     form = AssinaturaForm(request.POST or None, initial={"cliente_id":context['data'].id})
-    if form.is_valid():
+
+    assinaturas = Assinatura.objects.all()
+    assinatura = assinaturas.filter(cliente_id=context['data'].id)
+
+    flag_assinatura_existente = False
+    if (assinatura != None) and (assinatura != []):
+        flag_assinatura_existente = True
+
+
+    if form.is_valid() and not flag_assinatura_existente:
         form.save()
         return redirect('visualizar',email)
     
@@ -146,9 +156,26 @@ def ambiente_list_view(request,email):
 def ambiente_create_view(request,email):
     context = {}
     context['data'] = Cliente.objects.get(email=email)
+    ambientes = Ambiente.objects.all()
+    ambiente = ambientes.filter(cliente_id=context['data'].id)
     form = AmbienteForm(request.POST or None, initial={"cliente_id":context['data'].id})
-    if form.is_valid():
-        form.save()
-        return redirect('ambientes',email)
+    flag_amb_existente = False
+    if (ambiente != None) and (ambiente != []):
+        for amb in ambiente:
+            if amb.get_nome() == form['nome'].value():
+                flag_amb_existente = True
+                break
+    try:
+
+        if form.is_valid() and not flag_amb_existente:
+            form.save()
+            return redirect('ambientes',email)
+        elif(form.is_valid() and flag_amb_existente):
+            raise ValidationError('errou')
+
+    except ValidationError:
+        messages.info(request, 'Ambiente com esse nome já existe')
+
+
     context['form'] = form
     return render(request, "ambiente_create_view.html", context)

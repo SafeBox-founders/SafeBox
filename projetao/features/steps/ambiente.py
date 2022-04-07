@@ -33,7 +33,9 @@ def step_impl(context):
 @when("I fill the criar ambiente fields")
 def step_impl(context):
     choice = context.browser.find_element_by_name("nome")
-    choice.send_keys("Ambiente de teste")
+    global nome_ambiente
+    nome_ambiente = str(context.browser.session_id)
+    choice.send_keys(nome_ambiente)
 
 @when("I click on the criar button")
 def step_impl(context):
@@ -47,8 +49,7 @@ def step_impl(context):
 @then("I created a ambiente")
 def step_impl(context):
     ambiente = Ambiente.objects.all()
-    assert ambiente.filter(nome="Ambiente de teste")  != []
-
+    assert ambiente.filter(nome=nome_ambiente)  != []
 
 #=====================================================================
 
@@ -66,16 +67,27 @@ def step_impl(context):
 @Given("There is a registered ambiente")
 def step_impl(context):
     ambiente = Ambiente.objects.all()
-    assert ambiente.filter(nome="Ambiente de teste")  != []
+    assert ambiente.filter(nome=nome_ambiente)  != []
 
 @When("I click on view a existing ambiente")
 def step_impl(context):
-    button = context.browser.find_element_by_name("visualizarAmbiente de teste")
+    button = context.browser.find_element_by_name("visualizar"+nome_ambiente)
     button.click()
 
 @Then("I go the existing ambiente detail page")
 def step_impl(context):
-    assert context.browser.title == "Ambiente de teste"
+    assert context.browser.title == nome_ambiente
+
+@When("I click on desativar ambiente")
+def step_impl(context):
+
+    button = context.browser.find_element_by_name("desativar"+nome_ambiente)
+    button.click()
+
+@Then("I can see that the ambiente was deactivated")
+def step_impl(context):
+    ambiente = Ambiente.objects.all()
+    assert list(ambiente.filter(nome=nome_ambiente)) == []
 
 
 

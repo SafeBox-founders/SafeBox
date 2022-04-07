@@ -88,4 +88,7 @@ class Ambiente(models.Model):
 
     def get_numero_cameras(self):
         return self.numero_cameras
+
+    def deactivate(self):
+        self.delete()
     

@@ -70,8 +70,11 @@
                             <p class="card-text">
                                 <form method="post" >
                                 {% csrf_token %}
-                                <input type="submit" class="btn btn-primary"  value="Visualizar" name="visualizar{{ ambiente.nome}}"
-                                />
+                                <input type="submit" class="btn btn-primary"  value="Visualizar" name="visualizar{{ ambiente.nome}}"/>
+                                </form>
+                                <form method="post" >
+                                {% csrf_token %}
+                                <input type="submit" class="btn btn-primary"  value="Desativar" name="desativar{{ ambiente.nome}}"/>
                                 </form>
                             </p>
                         </div>

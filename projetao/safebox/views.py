@@ -152,11 +152,15 @@ def ambiente_list_view(request,email):
     if action_criar == 'Criar ambiente':
         return redirect('criar_ambiente',email)
 
-
     for amb in ambiente:
         action_criar = request.POST.get('visualizar' + str(amb.get_nome()))
+        action_desativar = request.POST.get('desativar' + str(amb.get_nome()))
         if action_criar == 'Visualizar':
             return redirect('ambiente_atual', email, amb.get_nome())
+        if action_desativar == 'Desativar':
+            amb.deactivate()
+            return redirect('ambientes', email)
+
     return render(request, "ambiente_list_view.html", context)
 
 def ambiente_create_view(request,email):

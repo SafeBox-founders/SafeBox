@@ -119,4 +119,10 @@ class AmbienteTest(TestCase):
     def test_fields(self):
         cliente = Cliente.objects.get(email="teste@gmail.com")
         record = Ambiente.objects.get(cliente_id=cliente.id)
-        self.assertEqual(self.ambiente,record)     
+        self.assertEqual(self.ambiente,record)
+
+    def test_deactivate_ambiente(self):
+        cliente = Cliente.objects.get(email="teste@gmail.com")
+        self.ambiente.deactivate()
+        lista_ambientes = Ambiente.objects.filter(cliente_id=cliente, nome="Ambiente de teste")
+        self.assertEqual(len(lista_ambientes), 0)

@@ -9,7 +9,7 @@
 
         <title>
             {% block title %}
-                Meus Ambientes
+                Assinatura
             {% endblock title %}
         </title>
     </head>
@@ -59,30 +59,16 @@
 
         </br></br></br>
 
-        <div class="container">
-            <div class ="row justify-content-center">
-                {% block content %}
-                    {% for ambiente in ambientes %}
-                        <div class="card col-sm-6 text-white border-light bg-dark mb-3  special-card " style="max-width: 11rem;">
-                            <div class="card-header">
-                                {{ ambiente.nome }}
-                            </div>
-                            <p class="card-text">
-                                <form method="post" >
-                                {% csrf_token %}
-                                <input type="submit" class="btn btn-primary"  value="Visualizar" name="visualizar{{ ambiente.nome}}"/>
-                                </form>
-                                <form method="post" >
-                                {% csrf_token %}
-                                <input type="submit" class="btn btn-primary"  value="Desativar" name="desativar{{ ambiente.nome}}"/>
-                                </form>
-                            </p>
-                        </div>
+       <div class="row justify-content-center">
+            <div class="col-sm-6 card text-blue bg-dark mb-3 special-card" style="max-width: 23rem;">
+              <div class="card-body">
+                  <div class="main" id="div_client_assinatura_info">
+                        <b>Nome do Plano:</b> {{ assinatura.plano_id }}<br/>
+                        <b>Data de Pagamento:</b> {{ assinatura.data_de_pagamento }}<br/>
+                        <b>Status do Pagamento:</b> {{ assinatura.pagamento_status }}<br/>
 
-                        <div class="col-sm-6" style="max-width: 1rem;"></div>
-
-                    {% endfor %}
-                {% endblock %}
+                    </div>
+              </div>
             </div>
         </div>
 
@@ -92,11 +78,10 @@
             <div class="row justify-content-center">
                 <form method="POST" enctype="multipart/form-data">
                     {% csrf_token %}
-                    <input type="submit" class="btn btn-primary" value="Criar ambiente" name="criar"/>
+                    <input type="submit" class="btn btn-primary" value="Voltar" name="voltar"/>
                 </form>
             </div>
         </div>
-
 
     </body>
 </html>

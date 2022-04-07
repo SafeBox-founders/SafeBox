@@ -6,3 +6,10 @@ Feature: Assign a plan to my user account
         And I click on the Assinar button
         Then I go to my profile view
         And I assigned my plan
+
+    Scenario: As a client of the system, I want to visualize my current signature
+        Given I am on the Profile View
+        And I have a signature
+        When I click on the Visualizar Assinatura button
+        Then I go to my signature view
+        And I can see my current signature

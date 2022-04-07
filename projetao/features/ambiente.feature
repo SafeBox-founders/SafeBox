@@ -13,3 +13,9 @@ Feature: CRUD of ambiente
         And There is a registered ambiente
         When I click on view a existing ambiente
         Then I go the existing ambiente detail page
+
+    Scenario: As a client of the system, I want to deactivate an existing ambiente
+        Given I am on ambientes list view
+        And There is a registered ambiente
+        When I click on desativar ambiente
+        Then I can see that the ambiente was deactivated

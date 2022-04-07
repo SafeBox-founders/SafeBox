@@ -40,9 +40,9 @@ def step_impl(context):
     button = context.browser.find_element_by_name("criar")
     button.click()
 
-@then("I go to Criar ambiente view")
+@then("I go to Meus ambientes view")
 def step_impl(context):
-    assert context.browser.title == "Criar Ambiente"
+    assert context.browser.title == "Meus Ambientes"
 
 @then("I created a ambiente")
 def step_impl(context):
@@ -60,7 +60,7 @@ def step_impl(context):
         and I click on the criar ambiente button
         and I fill the criar ambiente fields
         and I click on the criar button
-        then I go to Criar ambiente view
+        then I go to Meus ambientes view
         """)
 
 @Given("There is a registered ambiente")

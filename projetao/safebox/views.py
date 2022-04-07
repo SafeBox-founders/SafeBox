@@ -121,20 +121,18 @@ def sair(request):
 def assinatura_create_view(request, email):
     context = {}
     context['data'] = Cliente.objects.get(email=email)
-    form = AssinaturaForm(request.POST or None, initial={"cliente_id":context['data'].id})
-
     assinaturas = Assinatura.objects.all()
     assinatura = assinaturas.filter(cliente_id=context['data'].id)
 
     flag_assinatura_existente = False
-    if (assinatura != None) and (assinatura != []):
+    if (assinatura != None) and (len(assinatura) != 0):
         flag_assinatura_existente = True
 
-
+    form = AssinaturaForm(request.POST or None, initial={"cliente_id":context['data'].id})
     if form.is_valid() and not flag_assinatura_existente:
         form.save()
         return redirect('visualizar',email)
-    
+
     planos = Plano.objects.all()
     context['form'] = form
     context['planos'] = planos
@@ -147,10 +145,18 @@ def ambiente_list_view(request,email):
     ambientes = Ambiente.objects.all()
     ambiente = ambientes.filter(cliente_id=context['data'].id)
     context['ambientes'] =[]
-    if ambiente != None and ambiente != []:
+    if ambiente != None and len(ambiente) != 0:
         context['ambientes']=ambiente
-    if request.method == "POST":
+
+    action_criar =  request.POST.get('criar')
+    if action_criar == 'Criar ambiente':
         return redirect('criar_ambiente',email)
+
+
+    for amb in ambiente:
+        action_criar = request.POST.get('visualizar' + str(amb.get_nome()))
+        if action_criar == 'Visualizar':
+            return redirect('ambiente_atual', email, amb.get_nome())
     return render(request, "ambiente_list_view.html", context)
 
 def ambiente_create_view(request,email):
@@ -179,3 +185,18 @@ def ambiente_create_view(request,email):
 
     context['form'] = form
     return render(request, "ambiente_create_view.html", context)
+
+
+def ambiente_view(request, email, nome):
+    context = {}
+    context['data'] = Cliente.objects.get(email=email)
+    ambientes = Ambiente.objects.all()
+    ambiente = ambientes.filter(cliente_id=context['data'].id, nome=nome)
+
+    if ambiente != None and len(ambiente) != 0:
+        for amb in ambiente:
+            context['ambiente'] = amb
+            break
+
+    return render(request, "ambiente_view.html", context)
+

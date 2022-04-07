@@ -36,6 +36,7 @@ def cliente_detail_view(request, email):
         action_desativar = request.POST.get('desativar')
         action_editar = request.POST.get('editar')
         action_assinar = request.POST.get('assinar')
+        action_visualizar = request.POST.get('visualizar')
         if action_desativar == 'Desativar Conta':
             context['data'].deactivate()
             context['data'].save()
@@ -46,10 +47,30 @@ def cliente_detail_view(request, email):
             context['data'].save()
             return redirect('editar',context['data'].get_email())
 
-        if(action_assinar == "Assinar plano"):
+        if action_visualizar == 'Visualizar Assinatura':
+            return redirect('visualizar_assinatura',context['data'].get_email())
+
+        if action_assinar == "Assinar plano":
             return redirect('assinar_plano',context['data'].get_email())
 
     return render(request, "cliente_detail_view.html", context)
+
+def cliente_assinatura_view(request, email):
+    context = {}
+    context['data'] = Cliente.objects.get(email=email)
+    assinaturas = Assinatura.objects.all()
+    assinatura = assinaturas.filter(cliente_id=context['data'].id)
+
+    if assinatura != None and len(assinatura) == 1:
+        context['assinatura'] = assinatura[0]
+
+    if request.method == 'POST':
+        action_voltar = request.POST.get('voltar')
+        if action_voltar == 'Voltar':
+            return redirect('visualizar',email)
+
+    return render(request, "cliente_assinatura_view.html", context)
+
 
 def cliente_edit_view(request, email):
     context = {}
@@ -186,10 +207,8 @@ def ambiente_create_view(request,email):
     except ValidationError:
         messages.info(request, 'Ambiente com esse nome já existe')
 
-
     context['form'] = form
     return render(request, "ambiente_create_view.html", context)
-
 
 def ambiente_view(request, email, nome):
     context = {}

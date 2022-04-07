@@ -11,6 +11,7 @@ urlpatterns=[
     path("visualizar/<email>/", views.cliente_detail_view, name="visualizar"),
     path("editar/<email>/", views.cliente_edit_view, name="editar"),
     path("assinar/plano/<email>/",views.assinatura_create_view, name="assinar_plano"),
+    path("visualizar/plano/<email>", views.cliente_assinatura_view, name="visualizar_assinatura"),
     path("ambientes/<email>/", views.ambiente_list_view, name="ambientes"),
     path("ambientes/<email>/cadastar", views.ambiente_create_view, name="criar_ambiente"),
     path('ambientes/<email>/visualizar/<nome>', views.ambiente_view, name='ambiente_atual'),

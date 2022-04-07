@@ -9,7 +9,7 @@
 
         <title>
             {% block title %}
-                Plano
+                Assinatura
             {% endblock title %}
         </title>
     </head>
@@ -62,7 +62,7 @@
        <div class="row justify-content-center">
             <div class="col-sm-6 card text-blue bg-dark mb-3 special-card" style="max-width: 23rem;">
               <div class="card-body">
-                  <div class="main" id="div_client_info">
+                  <div class="main" id="div_client_assinatura_info">
                         <b>Nome do Plano:</b> {{ assinatura.plano_id }}<br/>
                         <b>Data de Pagamento:</b> {{ assinatura.data_de_pagamento }}<br/>
                         <b>Status do Pagamento:</b> {{ assinatura.pagamento_status }}<br/>

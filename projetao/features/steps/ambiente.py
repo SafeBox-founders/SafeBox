@@ -75,7 +75,7 @@ def step_impl(context):
 
 @Then("I go the existing ambiente detail page")
 def step_impl(context):
-    assert context.browser.find_element_by_name("Ambiente de teste")
+    assert context.browser.title == "Ambiente de teste"
 
 
 

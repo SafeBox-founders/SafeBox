@@ -79,4 +79,13 @@ class Ambiente(models.Model):
 
     def __str__(self):
         return self.nome
+
+    def get_cliente_id(self):
+        return self.cliente_id
+
+    def get_nome(self):
+        return  self.nome
+
+    def get_numero_cameras(self):
+        return self.numero_cameras
     

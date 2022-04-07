@@ -1,5 +1,6 @@
 from django.shortcuts import render, redirect, HttpResponse
-
+from django.core.exceptions import ValidationError
+from django.contrib import messages
 from .models import Cliente, Assinatura, Plano, Ambiente
 from .forms import AssinaturaForm, ClienteForm, ClienteLoginForm, AmbienteForm
 
@@ -119,38 +120,83 @@ def sair(request):
 
 def assinatura_create_view(request, email):
     context = {}
-    cliente = Cliente.objects.get(email=email)
-    form = AssinaturaForm(request.POST or None, initial={"cliente_id":cliente.id})
-    if form.is_valid():
+    context['data'] = Cliente.objects.get(email=email)
+    assinaturas = Assinatura.objects.all()
+    assinatura = assinaturas.filter(cliente_id=context['data'].id)
+
+    flag_assinatura_existente = False
+    if (assinatura != None) and (len(assinatura) != 0):
+        flag_assinatura_existente = True
+
+    form = AssinaturaForm(request.POST or None, initial={"cliente_id":context['data'].id})
+    if form.is_valid() and not flag_assinatura_existente:
         form.save()
         return redirect('visualizar',email)
-    
+
     planos = Plano.objects.all()
-    context = {
-        'form': form,
-        'planos': planos
-    }
+    context['form'] = form
+    context['planos'] = planos
 
     return render(request, "assinatura_create_view.html", context)
 
 def ambiente_list_view(request,email):
     context = {}
-    cliente = Cliente.objects.get(email=email)
+    context['data'] = Cliente.objects.get(email=email)
     ambientes = Ambiente.objects.all()
-    ambientes.filter(cliente_id=cliente.id)
-    context['ambientes'] = []
-    if ambientes != None and ambientes != []:
-        context['ambientes']=ambientes
-    if request.method == "POST":
+    ambiente = ambientes.filter(cliente_id=context['data'].id)
+    context['ambientes'] =[]
+    if ambiente != None and len(ambiente) != 0:
+        context['ambientes']=ambiente
+
+    action_criar =  request.POST.get('criar')
+    if action_criar == 'Criar ambiente':
         return redirect('criar_ambiente',email)
+
+
+    for amb in ambiente:
+        action_criar = request.POST.get('visualizar' + str(amb.get_nome()))
+        if action_criar == 'Visualizar':
+            return redirect('ambiente_atual', email, amb.get_nome())
     return render(request, "ambiente_list_view.html", context)
 
 def ambiente_create_view(request,email):
     context = {}
-    cliente = Cliente.objects.get(email=email)
-    form = AmbienteForm(request.POST or None, initial={"cliente_id":cliente.id})
-    if form.is_valid():
-        form.save()
-        return redirect('ambientes',email)
-    context = {'form': form}
+    context['data'] = Cliente.objects.get(email=email)
+    ambientes = Ambiente.objects.all()
+    ambiente = ambientes.filter(cliente_id=context['data'].id)
+    form = AmbienteForm(request.POST or None, initial={"cliente_id":context['data'].id})
+    flag_amb_existente = False
+    if (ambiente != None) and (ambiente != []):
+        for amb in ambiente:
+            if amb.get_nome() == form['nome'].value():
+                flag_amb_existente = True
+                break
+    try:
+
+        if form.is_valid() and not flag_amb_existente:
+            form.save()
+            return redirect('ambientes',email)
+        elif(form.is_valid() and flag_amb_existente):
+            raise ValidationError('errou')
+
+    except ValidationError:
+        messages.info(request, 'Ambiente com esse nome já existe')
+
+
+    context['form'] = form
     return render(request, "ambiente_create_view.html", context)
+
+
+def ambiente_view(request, email, nome):
+    context = {}
+    context['data'] = Cliente.objects.get(email=email)
+    ambientes = Ambiente.objects.all()
+    ambiente = ambientes.filter(cliente_id=context['data'].id, nome=nome)
+
+    if ambiente != None and len(ambiente) != 0:
+        for amb in ambiente:
+            context['ambiente'] = amb
+            break
+
+    return render(request, "ambiente_view.html", context)
+

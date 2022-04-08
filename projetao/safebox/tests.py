@@ -110,6 +110,14 @@ class AssinaturaTest(TestCase):
         record = Assinatura.objects.get(cliente_id=cliente.id)
         self.assertEqual(self.assinatura,record)
 
+
+    def test_edit_plano(self):
+        novo_plano = Plano.objects.create(nome="Premium", valor=100.00, relatorio=True, numero_cameras=3, numero_boundingbox=9)
+        cliente = Cliente.objects.get(email="teste@gmail.com")
+        assinatura = Assinatura.objects.get(cliente_id=cliente.id)
+        assinatura.set_plano_id(novo_plano)
+        self.assertEqual(assinatura.get_plano_id(), novo_plano)
+
 class AmbienteTest(TestCase):
     def setUp(self):
         self.ambiente = Ambiente()

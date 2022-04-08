@@ -82,3 +82,30 @@ def step_impl(context):
     for key in atts_dictionary_novo.keys():
         assert atts_dictionary_novo[key] == atts_dictionary_plano[key]
 
+
+
+
+@Then('I click on Trocar Plano')
+def step_impl(context):
+    button = context.browser.find_element_by_name("trocar_plano")
+    button.click()
+
+
+@Then('I chose my new plan')
+def step_impl(context):
+    choice = context.browser.find_element_by_name("plano_id")
+    choice.send_keys("Premium")
+
+@Then('I click on Mudar de plano')
+def step_impl(context):
+    button = context.browser.find_element_by_name("trocar")
+    button.click()
+
+@Then('I can see my new signature')
+def step_impl(context):
+    assert context.browser.title=="Assinatura"
+
+
+
+
+

@@ -1,6 +1,7 @@
 {% load static %}
+{% load crispy_forms_tags %}
 
-<html xmlns="http://www.w3.org/1999/html">
+<html>
     <head>
         <!---bootstrap--->
         <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
@@ -9,7 +10,7 @@
 
         <title>
             {% block title %}
-                Assinatura
+                Trocar plano
             {% endblock title %}
         </title>
     </head>
@@ -27,6 +28,9 @@
               background-image: url(https://i.ibb.co/pXn5JPj/background.png);
               background-repeat: no-repeat;
               background-position: bottom left;
+            }
+            .special-card {
+              opacity: .8;
             }
         </style>
 
@@ -49,40 +53,62 @@
           </div>
         </nav>
 
-        </br></br>
+        <div class="main">
+            </br></br></br></br>
 
-        <div class="container">
-            <div class ="row justify-content-center">
-                <img src="https://i.ibb.co/vXY3mr0/ambientes.png" class="img-fluid" alt="Responsive image" width="40%" height="40%" align="center">
+            <div class="container">
+                <div class ="row justify-content-center">
+                    <img src="https://i.ibb.co/hm6HYbD/assinatura.png" class="img-fluid" alt="Responsive image" width="30%" height="30%" align="center">
+                </div>
             </div>
-        </div>
 
-        </br></br></br>
+            </br></br>
 
-       <div class="row justify-content-center">
-            <div class="col-sm-6 card text-blue bg-dark mb-3 special-card" style="max-width: 23rem;">
-              <div class="card-body">
-                  <div class="main" id="div_client_assinatura_info">
-                        <b>Nome do Plano:</b> {{ assinatura.plano_id }}<br/>
-                        <b>Data de Pagamento:</b> {{ assinatura.data_de_pagamento }}<br/>
-                        <b>Status do Pagamento:</b> {{ assinatura.pagamento_status }}<br/>
-
+            <div class="container">
+                <div class ="row justify-content-center">
+            {% for plano in planos %}
+                <div class="card col-sm-6 text-white border-light bg-dark mb-3  special-card " style="max-width: 11rem;">
+                    <div class="card-header">
+                        <img src="https://i.ibb.co/vzL55qk/pro.png" class="img-fluid" alt="Responsive image" width="20%" height="20%" align="center">
+                        <b>{{ plano.nome }}</b>
                     </div>
-              </div>
+                    <p class="card-text">
+                        <b>Valor: </b>{{ plano.valor }}
+                    </p>
+                    <p class="card-text">
+                        <b>Qntd. de câmeras: </b>{{ plano.numero_cameras }}</br>
+                    </p>
+                    <p class="card-text">
+                        <b>Qntd. de boxes: </b>{{ plano.numero_boundingbox }}</br>
+                    </p>
+                    <p class="card-text">
+                        <b>Relatório mensal: </b>{{ plano.relatorio }}
+                    </p>
+                </div>
+
+                <div class="col-sm-6" style="max-width: 1rem;"></div>
+
+            {% endfor %}
+
+                </div>
             </div>
-        </div>
 
-        </br></br></br>
+            </br>
 
-        <div class="container">
-            <div class="row justify-content-center">
+            <div class="container">
+                <div class="row justify-content-center">
                 <form method="POST" enctype="multipart/form-data">
                     {% csrf_token %}
-                    <input type="submit" class="btn btn-primary" value="Voltar" name="voltar"/>
-                    <input type="submit" class="btn btn-primary" value="Trocar Plano" name="trocar_plano"/>
+                    {{ form|crispy}}
+                    <input type="submit" class="btn btn-primary" value="Mudar de Plano" name="trocar"/>
                 </form>
+                </div>
             </div>
+
         </div>
 
     </body>
 </html>
+
+
+

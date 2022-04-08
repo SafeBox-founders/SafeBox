@@ -87,8 +87,6 @@ class Assinatura(models.Model):
     def set_plano_id(self, novo_plano_id):
         self.plano_id = novo_plano_id
 
-    def set_data_de_pagamento(self, nova_data):
-        self.data_de_pagamento = nova_data
 
 class Ambiente(models.Model):
     cliente_id = models.ForeignKey(Cliente, to_field="id", on_delete=models.CASCADE)

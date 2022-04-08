@@ -75,8 +75,9 @@ def cliente_assinatura_view(request, email):
         return redirect('trocar_assinatura', email)
 
     if action_remover == 'Remover Plano':
-        messages.success(request, "Esta assinatura foi removida!")
+        #messages.info(request, "Assinatura desfeita com sucesso!")
         remover_assinatura(request, email)
+        return redirect('visualizar', email)
 
     return render(request, "cliente_assinatura_view.html", context)
 
@@ -86,12 +87,11 @@ def remover_assinatura(request, email):
     assinatura = assinaturas.filter(cliente_id=cliente.id)
 
     flag_assinatura_existente = False
-    if (assinatura != None) and (len(assinatura) != 0):
+    if (assinatura != None and len(assinatura)):
         flag_assinatura_existente = True
 
     if flag_assinatura_existente:
-        assinatura.delete()
-        return redirect('visualizar', email)
+        assinatura[0].delete()
 
 def cliente_edit_view(request, email):
     context = {}

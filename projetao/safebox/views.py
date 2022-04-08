@@ -64,10 +64,14 @@ def cliente_assinatura_view(request, email):
     if assinatura != None and len(assinatura) == 1:
         context['assinatura'] = assinatura[0]
 
-    if request.method == 'POST':
-        action_voltar = request.POST.get('voltar')
-        if action_voltar == 'Voltar':
-            return redirect('visualizar',email)
+    action_voltar = request.POST.get('voltar')
+    action_trocar = request.POST.get('trocar_plano')
+
+    if action_voltar == 'Voltar':
+        return redirect('visualizar',email)
+
+    if action_trocar == 'Trocar Plano':
+        return redirect('trocar_assinatura', email)
 
     return render(request, "cliente_assinatura_view.html", context)
 
@@ -159,6 +163,30 @@ def assinatura_create_view(request, email):
     context['planos'] = planos
 
     return render(request, "assinatura_create_view.html", context)
+
+
+def assinatura_trocar_view(request, email):
+    context = {}
+    context['data'] = Cliente.objects.get(email=email)
+    assinaturas = Assinatura.objects.all()
+    assinatura = assinaturas.filter(cliente_id=context['data'].id)
+
+    flag_assinatura_existente = False
+    if (assinatura != None) and (len(assinatura) != 0):
+        flag_assinatura_existente = True
+
+    form = AssinaturaForm(request.POST or None, initial={"cliente_id": context['data'].id})
+    if form.is_valid() and flag_assinatura_existente:
+        assinatura.delete()
+        form.save()
+        return redirect('visualizar_assinatura', email)
+
+    planos = Plano.objects.all()
+    context['form'] = form
+    context['planos'] = planos
+
+    return render(request, "assinatura_trocar_plano.html", context)
+
 
 def ambiente_list_view(request,email):
     context = {}

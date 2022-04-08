@@ -72,6 +72,24 @@ class Assinatura(models.Model):
     data_de_pagamento = models.DateTimeField(auto_now_add=True)
     pagamento_status = models.BooleanField(null=False, default=False)
 
+    def get_cliente_id(self):
+        return self.cliente_id
+
+    def get_plano_id(self):
+        return self.plano_id
+
+    def get_data_de_pagamento(self):
+        return self.data_de_pagamento
+
+    def get_pagamento_status(self):
+        return self.pagamento_status
+
+    def set_plano_id(self, novo_plano_id):
+        self.plano_id = novo_plano_id
+
+    def set_data_de_pagamento(self, nova_data):
+        self.data_de_pagamento = nova_data
+
 class Ambiente(models.Model):
     cliente_id = models.ForeignKey(Cliente, to_field="id", on_delete=models.CASCADE)
     nome = models.CharField(max_length=255, null=False)

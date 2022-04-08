@@ -80,6 +80,7 @@
                     {% csrf_token %}
                     <input type="submit" class="btn btn-primary" value="Voltar" name="voltar"/>
                     <input type="submit" class="btn btn-primary" value="Trocar Plano" name="trocar_plano"/>
+                    <input type="submit" onclick="return confirm('Essa assinatura será removida! Deseja continuar?')" class="btn btn-danger fix-size" value="Remover Plano" name="remover_plano"/>
                 </form>
             </div>
         </div>

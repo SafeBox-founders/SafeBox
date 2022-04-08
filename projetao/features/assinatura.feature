@@ -24,5 +24,14 @@ Feature: Assign a plan to my user account
         And I click on Mudar de plano
         And I can see my new signature
 
+    Scenario: As a cliente of the system, I want to remove the current signature
+        Given I am on the Profile View
+        And I have a signature
+        When I click on the Visualizar Assinatura button
+        Then I go to my signature view
+        And I click on Remover Plano
+        And I can see the message confirm
+        And I click on confirm button 'OK'
+        And I can see the Profile View
 
 

@@ -105,7 +105,25 @@ def step_impl(context):
 def step_impl(context):
     assert context.browser.title=="Assinatura"
 
+@Then('I click on Remover Plano')
+def step_impl(context):
+    button = context.browser.find_element_by_name("remover_plano")
+    button.click()
 
+@Then('I can see the message confirm')
+def step_impl(context):
+    confirm = context.browser.switch_to.alert
+    texto = confirm.text
+    assert texto == "Essa assinatura será removida! Deseja continuar?"
 
+@Then('I click on confirm button \'OK\'')
+def step_impl(context):
+    confirm = context.browser.switch_to.alert
+    confirm.accept()
+
+@Then('I can see the Profile View')
+def step_impl(context):
+    title = context.browser.title
+    assert title == "Meu Perfil"
 
 

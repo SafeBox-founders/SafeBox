@@ -66,6 +66,7 @@ def cliente_assinatura_view(request, email):
 
     action_voltar = request.POST.get('voltar')
     action_trocar = request.POST.get('trocar_plano')
+    action_remover = request.POST.get('remover_plano')
 
     if action_voltar == 'Voltar':
         return redirect('visualizar',email)
@@ -73,8 +74,24 @@ def cliente_assinatura_view(request, email):
     if action_trocar == 'Trocar Plano':
         return redirect('trocar_assinatura', email)
 
+    if action_remover == 'Remover Plano':
+        #messages.info(request, "Assinatura desfeita com sucesso!")
+        remover_assinatura(request, email)
+        return redirect('visualizar', email)
+
     return render(request, "cliente_assinatura_view.html", context)
 
+def remover_assinatura(request, email):
+    cliente = Cliente.objects.get(email=email)
+    assinaturas = Assinatura.objects.all()
+    assinatura = assinaturas.filter(cliente_id=cliente.id)
+
+    flag_assinatura_existente = False
+    if (assinatura != None and len(assinatura)):
+        flag_assinatura_existente = True
+
+    if flag_assinatura_existente:
+        assinatura[0].delete()
 
 def cliente_edit_view(request, email):
     context = {}

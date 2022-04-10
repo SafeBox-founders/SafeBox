@@ -1,6 +1,7 @@
 {% load static %}
+{% load crispy_forms_tags %}
 
-<html xmlns="http://www.w3.org/1999/html">
+<html>
     <head>
         <!---bootstrap--->
         <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
@@ -9,7 +10,7 @@
 
         <title>
             {% block title %}
-                {{ ambiente.nome }}
+                Editar Ambiente
             {% endblock title %}
         </title>
     </head>
@@ -18,7 +19,7 @@
 
         <style>
             .fix-size {
-                width: 40%;
+                width: 100%;
             }
             body {
               color: #fff;
@@ -49,44 +50,38 @@
           </div>
         </nav>
 
-        </br></br>
+        <div class="main">
 
-        <div class="container">
-            <div class ="row justify-content-center">
-                <img src="https://i.ibb.co/vXY3mr0/ambientes.png" class="img-fluid" alt="Responsive image" width="40%" height="40%" align="center">
+            </br></br></br></br>
+
+                <h1>Editar Ambiente</h1>
+
+            </br></br></br>
+
+            <div class="container">
+                <div class="row justify-content-center">Editando ambiente: {{ nome_in_edit }}</div>
+                <div class="row justify-content-center">
+                    <form method="POST" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        {{ form|crispy }}
+                        <input type="submit" class="btn btn-primary fix-size" value="Confirmar Edição" name="editar"/>
+                    </form>
+                </div>
+                <div class="row justify-content-center">
+                    <form method="GET" enctype="multipart/form-data">
+                        <input type="submit" class="btn btn-danger fix-size" value="Cancelar" name="cancelar"/>
+                    </form>
+                </div>
             </div>
         </div>
 
-        </br></br></br>
-
-       <div class="row justify-content-center">
-            <div class="col-sm-6 card text-blue bg-dark mb-3 special-card" style="max-width: 23rem;">
-              <div class="card-body">
-                  <div class="main" id="div_client_info">
-                        <b>Nome:</b> {{ ambiente.nome }}<br/>
-                        <b>Nº de câmeras:</b> {{ ambiente.numero_cameras }}<br/>
-                    </div>
-              </div>
-            </div>
-        </div>
-
-        <div class="container">
-            <div class="row justify-content-center">
-                <form method="GET" enctype="multipart/form-data" class="mx-3">
-                    {% csrf_token %}
-                    <input type="submit" class="btn btn-primary" value="Editar Ambiente" name="editar_ambiente"/>
-                </form>
-                <form method="POST" enctype="multipart/form-data">
-                    {% csrf_token %}
-                    <input type="submit" class="btn btn-primary" value="Adicionar nova câmera" name="addcam"/>
-                </form>
-            </div>
-        </div>
-
-
-        </br></br></br>
-
-
+        {% if messages %}
+        <ul class="messages">
+            {% for message in messages %}
+            <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+            {% endfor %}
+        </ul>
+        {% endif %}
 
     </body>
 </html>

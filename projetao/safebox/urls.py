@@ -16,4 +16,5 @@ urlpatterns=[
     path("ambientes/<email>/", views.ambiente_list_view, name="ambientes"),
     path("ambientes/<email>/cadastar", views.ambiente_create_view, name="criar_ambiente"),
     path('ambientes/<email>/visualizar/<nome>', views.ambiente_view, name='ambiente_atual'),
+    path("ambientes/<email>/editar/<nome>", views.ambiente_edit_view, name='editar_ambiente')
 ]

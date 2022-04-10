@@ -89,5 +89,51 @@ def step_impl(context):
     ambiente = Ambiente.objects.all()
     assert list(ambiente.filter(nome=nome_ambiente)) == []
 
+@Given("I click on editar ambiente")
+def step_impl(context):
+    button_editar = context.browser.find_element_by_name("editar"+str(nome_ambiente))
+    button_editar.click()
 
+@Given("I fill the name field")
+def step_impl(context):
+    nome_field = context.browser.find_element_by_name("nome")
+    global new_nome
+    new_nome = "Um novo nome para este ambiente"
+    nome_field.send_keys(new_nome)
 
+@Given("I click on confirmar edição")
+def step_impl(context):
+    button_confirm = context.browser.find_element_by_name("confirmar editar")
+    button_confirm.click()
+
+@Then("I can see that the ambiente was edited")
+def step_impl(context):
+    ambiente = Ambiente.objects.all()
+    assert list(ambiente.filter(nome=new_nome)) != []
+
+@Given("I fill the repeated name field")
+def step_impl(context):
+    nome_field = context.browser.find_element_by_name("nome")
+    nome_field.send_keys(nome_ambiente)
+
+@Then("I can see that the ambiente was not edited")
+def step_impl(context):
+    error_message = "Ambiente com esse nome já existe ou o nome não está sendo modificado!"
+    bodyText = context.browser.find_element_by_tag_name('body').text
+    assert error_message in bodyText
+
+@When("I click on cancelar")
+def step_impl(context):
+    button_cancel = context.browser.find_element_by_name("cancelar")
+    button_cancel.click()
+
+@Then("I am on ambientes list view")
+def step_impl(context):
+    context.execute_steps(u"""
+            given I am on the Home View
+            when I click on Gerenciar câmeras 
+            and I click on the criar ambiente button
+            and I fill the criar ambiente fields
+            and I click on the criar button
+            then I go to Meus ambientes view
+            """)

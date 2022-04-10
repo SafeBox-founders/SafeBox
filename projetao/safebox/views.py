@@ -221,11 +221,14 @@ def ambiente_list_view(request,email):
     for amb in ambiente:
         action_criar = request.POST.get('visualizar' + str(amb.get_nome()))
         action_desativar = request.POST.get('desativar' + str(amb.get_nome()))
+        action_editar = request.GET.get('editar' + str(amb.get_nome()))
         if action_criar == 'Visualizar':
             return redirect('ambiente_atual', email, amb.get_nome())
         if action_desativar == 'Desativar':
             amb.deactivate()
             return redirect('ambientes', email)
+        if action_editar == "Editar":
+            return redirect("editar_ambiente", email, amb.get_nome())
 
     return render(request, "ambiente_list_view.html", context)
 
@@ -266,5 +269,43 @@ def ambiente_view(request, email, nome):
             context['ambiente'] = amb
             break
 
+    if context['ambiente'] != None:
+        action_edit = request.GET.get('editar_ambiente')
+        if action_edit == "Editar Ambiente":
+            return redirect("editar_ambiente", email, context['ambiente'].get_nome())
+
     return render(request, "ambiente_view.html", context)
 
+def ambiente_edit_view(request, email, nome):
+    action_cancelar = request.GET.get('cancelar')
+    if action_cancelar == "Cancelar":
+        return redirect("ambientes", email)
+
+    context = {}
+    context['data'] = Cliente.objects.get(email=email)
+    ambientes = Ambiente.objects.all()
+    ambiente = ambientes.filter(cliente_id=context['data'].id, nome=nome)
+
+    form = AmbienteForm(request.POST or None, initial={"cliente_id": context['data'].id, "numero_cameras": ambiente[0].get_numero_cameras()})
+
+    flag_amb_existente = False
+    if (ambiente != None) and (ambiente != []):
+        for amb in ambiente:
+            if amb.get_nome() == form['nome'].value():
+                flag_amb_existente = True
+                break
+
+    try:
+        if form.is_valid() and not flag_amb_existente:
+            ambiente.delete()
+            form.save()
+            return redirect('ambientes', email)
+        elif (form.is_valid() and flag_amb_existente):
+            raise ValidationError('errou')
+
+    except ValidationError:
+        messages.info(request, 'Ambiente com esse nome já existe ou o nome não está sendo modificado!')
+
+    context['form'] = form
+    context['nome_in_edit'] = nome
+    return render(request, "ambiente_edit_view.html", context)

@@ -72,6 +72,10 @@
                                 {% csrf_token %}
                                 <input type="submit" class="btn btn-primary"  value="Visualizar" name="visualizar{{ ambiente.nome}}"/>
                                 </form>
+                                <form method="get" >
+                                    {% csrf_token %}
+                                    <input type="submit" class="btn btn-primary"  value="Editar" name="editar{{ ambiente.nome}}"/>
+                                </form>
                                 <form method="post" >
                                 {% csrf_token %}
                                 <input type="submit" class="btn btn-primary"  value="Desativar" name="desativar{{ ambiente.nome}}"/>

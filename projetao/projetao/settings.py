@@ -58,7 +58,7 @@ ROOT_URLCONF = 'safebox.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join((BASE_DIR), 'templates/')],
+        'DIRS': [BASE_DIR.as_posix()+'templates/'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -80,7 +80,7 @@ WSGI_APPLICATION = 'projetao.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': str(BASE_DIR / "db.sqlite3"),
+        'NAME': str(BASE_DIR.as_posix() + 'db.sqlite3'),
     }
 }
 
@@ -126,7 +126,7 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
+STATICFILES_DIRS = [BASE_DIR.as_posix() + 'static']
 
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
 

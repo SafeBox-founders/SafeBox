@@ -12,12 +12,19 @@ from behave import *
 from pandas import options
 from selenium import webdriver
 from safebox.models import Cliente
+from selenium.webdriver.chrome.options import Options
 
 use_step_matcher("re")
 
 @given("I am on the Cadastrar Cliente View")
 def step_impl(context):
-    context.browser = webdriver.Chrome()
+    options = Options()
+    options.add_argument('--headless')
+    options.add_argument('--no-sandbox')
+    options.add_argument('--disable-dev-shm-usage')
+    options.binary_location = '/usr/bin/google-chrome-stable'
+    driver = webdriver.Chrome(options=options, executable_path='/usr/local/bin/chromedriver')
+    context.browser = driver
     context.browser.get("http://127.0.0.1:8000/")
     button = context.browser.find_element_by_name("cadastrar")
     button.click()

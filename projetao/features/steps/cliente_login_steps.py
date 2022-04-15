@@ -15,7 +15,7 @@ from pandas import options
 from selenium import webdriver
 from safebox.models import Cliente
 from selenium.webdriver.support.ui import WebDriverWait
-
+from selenium.webdriver.chrome.options import Options
 use_step_matcher("re")
 
 @given('Eu sou um usuario cadastrado')
@@ -30,7 +30,13 @@ def step_impl(context):
 
 @given('Eu estou na tela de login')
 def step_impl(context):
-    context.browser = webdriver.Chrome()
+    options = Options()
+    options.add_argument('--headless')
+    options.add_argument('--no-sandbox')
+    options.add_argument('--disable-dev-shm-usage')
+    options.binary_location = '/usr/bin/google-chrome-stable'
+    driver = webdriver.Chrome(options=options, executable_path='/usr/local/bin/chromedriver')
+    context.browser = driver
     context.browser.get("http://127.0.0.1:8000/")
     #context.browser.title == "Login"
 

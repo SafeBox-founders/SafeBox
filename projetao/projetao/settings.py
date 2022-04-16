@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'safebox',
     'behave',
     'crispy_forms',
+   # 'paypal.standard.ipn',
 ]
 
 MIDDLEWARE = [
@@ -130,5 +131,6 @@ STATICFILES_DIRS = [BASE_DIR.as_posix() + 'static']
 
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
 
-
+#PAYPAL_RECEIVER_EMAIL = 'sb-zaqyr15286318@personal.example.com'
+#PAYPAL_TEST = True
 

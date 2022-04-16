@@ -1,4 +1,4 @@
-from django.urls import path
+from django.urls import path, include
 
 from . import views
 
@@ -16,5 +16,7 @@ urlpatterns=[
     path("ambientes/<email>/", views.ambiente_list_view, name="ambientes"),
     path("ambientes/<email>/cadastar", views.ambiente_create_view, name="criar_ambiente"),
     path('ambientes/<email>/visualizar/<nome>', views.ambiente_view, name='ambiente_atual'),
-    path("ambientes/<email>/editar/<nome>", views.ambiente_edit_view, name='editar_ambiente')
+    path("ambientes/<email>/editar/<nome>", views.ambiente_edit_view, name='editar_ambiente'),
+    path("payments/<email>/<id>", views.payments, name='payments'),
+    #path(r'paypal/', include('paypal.standard.ipn.urls')),
 ]

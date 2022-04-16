@@ -17,6 +17,14 @@
 
     <body class="text-center">
 
+    <script language="javascript" type="text/javascript">
+        function popitup(url, plano) {
+            newwindow=window.open(url,'{{title}}','height=600,width=600');
+            if (window.focus) {newwindow.focus()}
+            return false;
+        }
+    </script>
+
         <style>
             .fix-size {
                 width: 40%;

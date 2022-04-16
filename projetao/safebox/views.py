@@ -1,5 +1,6 @@
 from django.shortcuts import render, redirect, HttpResponse
 from django.core.exceptions import ValidationError
+from django.urls import reverse
 from django.contrib import messages
 from .models import Cliente, Assinatura, Plano, Ambiente
 from .forms import AssinaturaForm, ClienteForm, ClienteLoginForm, AmbienteForm
@@ -160,8 +161,25 @@ def sair(request):
     return redirect('login')
 ###################################################################
 
+def payments(request, email, id):
+    context = {}
+    assinatura = Assinatura.objects.all()
+    assinatura = assinatura.filter(id=id)
+    if assinatura != None and len(assinatura) != 0:
+        plano = Plano.objects.all()
+        plano = plano.filter(nome=assinatura[0].plano_id)
+        if plano != None and len(plano) != 0:
+            context['plano_valor'] = plano[0].valor
+
+    variavel = request.POST.get('voltar')
+    if variavel == 'Voltar':
+        return redirect('visualizar', email)
+
+    return render(request, 'payments.html', context)
+
 def assinatura_create_view(request, email):
     context = {}
+    tmp = {}
     context['data'] = Cliente.objects.get(email=email)
     assinaturas = Assinatura.objects.all()
     assinatura = assinaturas.filter(cliente_id=context['data'].id)
@@ -172,8 +190,20 @@ def assinatura_create_view(request, email):
 
     form = AssinaturaForm(request.POST or None, initial={"cliente_id":context['data'].id})
     if form.is_valid() and not flag_assinatura_existente:
-        form.save()
-        return redirect('visualizar',email)
+        plano_id_temp = form['plano_id'].value()
+        plano = Plano.objects.all()
+        plano = plano.filter(id=plano_id_temp)
+
+        if plano != None and len(plano) > 0:
+            context['valor_plano'] = plano[0].valor
+            #tmp['valor_plano'] = plano[0].valor
+            tmp['email'] = email
+            form.save()
+            assinatura = Assinatura.objects.all()
+            assinatura = assinatura.filter(cliente_id=context['data'].id)
+            if assinatura != None and len(assinatura) != 0:
+                tmp['id'] = assinatura[0].id
+                return redirect('payments', email, assinatura[0].id)
 
     planos = Plano.objects.all()
     context['form'] = form

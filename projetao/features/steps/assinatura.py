@@ -35,9 +35,11 @@ def step_impl(context):
 
 @When("I click on the Assinar button")
 def step_impl(context):
-
     button = context.browser.find_element_by_name("assinar")
     button.click()
+    button = context.browser.find_element_by_name("voltar")
+    button.click()
+
 
 @Then("I assigned my plan")
 def step_impl(context):

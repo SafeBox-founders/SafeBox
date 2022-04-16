@@ -1,0 +1,111 @@
+{% load static %}
+{% load crispy_forms_tags %}
+
+<html>
+  <head>
+            <!---bootstrap--->
+        <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+        <link rel="stylesheet" href="{% static 'fa/css/all.min.css' %}">
+        <script src="{% static 'js/bootstrap.min.js' %}"></script>
+
+        <title>
+            {% block title %}
+                Pagamento
+            {% endblock title %}
+        </title>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+  </head>
+  <body>
+        <style>
+            .fix-size {
+                width: 100%;
+            }
+            body {
+              color: #fff;
+              height: 100%;
+              background-color: #333;
+              background-image: url(https://i.ibb.co/pXn5JPj/background.png);
+              background-repeat: no-repeat;
+              background-position: bottom left;
+            }
+        </style>
+
+          <!--- nav bar --->
+
+        <nav class="navbar navbar-expand-lg navbar-dark" style="background-color: #386bc9">
+
+          <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+
+          <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+            <div class="navbar-nav">
+              <a class="nav-item nav-link" href="/home/{{data.email}}" name="tela_inicial">Home</a>
+              <a class="nav-item nav-link" href="/visualizar/{{data.email}}" name="visualizar_perfil">Perfil</a>
+              <a class="nav-item nav-link" href="/ambientes/{{data.email}}" name="gerenciar_câmeras">Gerenciar câmeras</a>
+              <a class="nav-item nav-link" href="#" name="relatorios">Relatórios</a>
+              <a class="nav-item nav-link" href="/" name="sair">Sair</a>
+            </div>
+          </div>
+        </nav>
+
+
+        </br></br>
+
+        <div class="container">
+            <div class ="row justify-content-center">
+                <img src="https://i.ibb.co/XzWDR21/PAGAMENTO.png" class="img-fluid" alt="Responsive image" width="40%" height="40%" align="center">
+            </div>
+        </div>
+
+        </br></br></br>
+
+
+        <div class="row justify-content-center">
+            <div class="col-sm-6 card text-blue bg-dark mb-3 special-card" style="max-width: 23rem;">
+              <div class="card-body">
+                  <div class="main" id="div_client_assinatura_info">
+ <!-- Replace "test" with your own sandbox Business account app client ID -->
+        <script src="https://www.paypal.com/sdk/js?client-id=AYwoN60EQnwgDtPWGXQH6v0aN8YnWHbS_cfLxL6UPtnV4c3R0wL9rjQlVZ-PchJAA-tl6Y3Zs7Nbq-uN&currency=BRL"></script>
+        <!-- Set up a container element for the button -->
+        <div id="paypal-button-container"></div>
+        <script>
+          {% block content %}{% endblock %}
+          var valor = "{{ plano_valor }}"
+          var valor = valor.replace(',', '.')
+          paypal.Buttons({
+            createOrder: (data, actions) => {
+              return actions.order.create({
+                purchase_units: [{
+                  amount: {
+                    value: valor
+                  }
+                }]
+              });
+            },
+            onApprove: (data, actions) => {
+              return actions.order.capture().then(function(orderData) {
+                console.log('Capture result', orderData, JSON.stringify(orderData, null, 2));
+                const transaction = orderData.purchase_units[0].payments.captures[0];
+                alert(`Transaction ${transaction.status}: ${transaction.id}\n\nSee console for all available details`);
+              });
+            }
+          }).render('#paypal-button-container');
+
+        </script>
+
+                    </div>
+              </div>
+            </div>
+        </div>
+
+        <div class="row justify-content-center">
+          <form method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+            <input type="submit" class="btn btn-danger fix-size" value="Voltar" name="voltar"/>
+          </form>
+        </div>
+
+  </body>
+</html>

@@ -1,5 +1,5 @@
 from django.test import TestCase
-from .models import Cliente, Plano, Assinatura, Ambiente
+from .models import Camera, Cliente, Plano, Assinatura, Ambiente
 import unittest
 from django.urls import reverse
 
@@ -134,3 +134,17 @@ class AmbienteTest(TestCase):
         self.ambiente.deactivate()
         lista_ambientes = Ambiente.objects.filter(cliente_id=cliente, nome="Ambiente de teste")
         self.assertEqual(len(lista_ambientes), 0)
+
+class CameraTest(TestCase):
+    def setUp(self):
+        ambiente = Ambiente()
+        cliente = Cliente.objects.create(nome="testador",email="teste@gmail.com",contato="00000000000",cpf_cnpj="00000000000",senha="123456")
+        ambiente = Ambiente.objects.create(cliente_id = cliente, nome = "Ambiente de teste", numero_cameras=0)
+        self.camera = Camera()
+        self.camera = Camera.objects.create(nome="camera teste", ip="10.0.0.0", ambiente_id = ambiente, usuario="admin", senha="admin", porta="8080")
+    
+    def test_fields(self):
+        cliente = Cliente.objects.get(email="teste@gmail.com")
+        ambiente = Ambiente.objects.get(cliente_id=cliente.id)
+        record = Camera.objects.get(ambiente_id=ambiente.id)
+        self.assertEqual(record, self.camera)

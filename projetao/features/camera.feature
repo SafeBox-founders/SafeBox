@@ -8,7 +8,6 @@ Feature: CRUD of ambiente
         And I created a camera
 
     Scenario: As a client of the system, I want to view a camera
-        Given I am at an Ambiente view
-        And I have a created camera
+        Given I have a created camera
         When I click on visualizar camera
         Then I go to the camera view

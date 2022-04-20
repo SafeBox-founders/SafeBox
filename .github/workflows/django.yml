@@ -55,6 +55,7 @@ jobs:
         python projetao/manage.py sqlmigrate safebox 0003
         python projetao/manage.py sqlmigrate safebox 0004
         python projetao/manage.py sqlmigrate safebox 0005
+        python projetao/manage.py sqlmigrate safebox 0006
         python projetao/manage.py migrate
         python projetao/manage.py loaddata plano.json
     - name: Run Tests

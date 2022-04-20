@@ -107,4 +107,18 @@ class Ambiente(models.Model):
 
     def deactivate(self):
         self.delete()
+
+class Camera(models.Model):
+    ip = models.CharField(max_length=255, null=False)
+    nome = models.CharField(max_length=255, null=False)
+    num_boundingbox = models.IntegerField(null=False,default=0)
+    ambiente_id = models.ForeignKey(Ambiente, to_field="id", on_delete=models.CASCADE)
+    usuario = models.CharField(max_length=255, null=False)
+    senha = models.CharField(max_length=255, null=False)
+    porta = models.CharField(max_length=255, null=False)
+
+    def __str__(self) -> str:
+        return self.nome
     
+    def get_ip(self):
+        return self.ip

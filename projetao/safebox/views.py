@@ -1,9 +1,12 @@
+from os import name
 from django.shortcuts import render, redirect, HttpResponse
 from django.core.exceptions import ValidationError
 from django.urls import reverse
 from django.contrib import messages
-from .models import Cliente, Assinatura, Plano, Ambiente
-from .forms import AssinaturaForm, ClienteForm, ClienteLoginForm, AmbienteForm
+from .models import Camera, Cliente, Assinatura, Plano, Ambiente
+from .forms import AssinaturaForm, CameraForm, ClienteForm, ClienteLoginForm, AmbienteForm
+import cv2
+from django.http import StreamingHttpResponse
 
 def index(request):
     return HttpResponse("Safe Box")
@@ -293,6 +296,20 @@ def ambiente_view(request, email, nome):
     context['data'] = Cliente.objects.get(email=email)
     ambientes = Ambiente.objects.all()
     ambiente = ambientes.filter(cliente_id=context['data'].id, nome=nome)
+    cameras = Camera.objects.all()
+    camera = cameras.filter(ambiente_id = ambiente[0].id)
+    context['cameras'] = []
+    if camera != None and len(camera) != 0:
+        context['cameras']=camera
+
+    action_criar =  request.POST.get('addcam')
+    if action_criar == 'Adicionar nova câmera':
+        return redirect('criar_camera',email, nome)
+
+    for cam in camera:
+        action_criar = request.POST.get('visualizar' + str(cam.get_ip()))
+        if action_criar == 'Visualizar':
+            return redirect('camera_atual', email, nome, cam.get_ip())
 
     if ambiente != None and len(ambiente) != 0:
         for amb in ambiente:
@@ -339,3 +356,66 @@ def ambiente_edit_view(request, email, nome):
     context['form'] = form
     context['nome_in_edit'] = nome
     return render(request, "ambiente_edit_view.html", context)
+
+def camera_view(request, email, nome, ip):
+    context = {}
+    context['data'] = Cliente.objects.get(email=email)
+    ambientes = Ambiente.objects.all()
+    ambiente = ambientes.get(cliente_id=context['data'].id, nome=nome)
+    cameras = Camera.objects.all()
+    camera = cameras.filter(ambiente_id = ambiente.id, ip = ip)
+    context['ambiente_name'] = nome
+    if camera != None and len(camera) != 0:
+        for cam in camera:
+            context['camera'] = cam
+            break
+
+    return render(request, "camera_view.html", context)
+
+def camera_create_view(request, email, nome):
+    context = {}
+    context['data'] = Cliente.objects.get(email=email)
+    context['ambiente'] = Ambiente.objects.get(cliente_id=context['data'].id, nome=nome)
+    cameras = Camera.objects.all()
+    form = CameraForm(request.POST or None, initial={"ambiente_id": context['ambiente'].id})
+    flag_cam_existe = False
+    if (cameras != None) and (cameras != []):
+        for cam in cameras:
+            if cam.get_ip() == form['ip'].value():
+                flag_cam_existe = True
+                break
+    try:
+        if form.is_valid() and not flag_cam_existe:
+            form.save()
+            return redirect('ambiente_atual',email, nome)
+        elif(form.is_valid() and flag_cam_existe):
+            raise ValidationError('errou')
+
+    except ValidationError:
+        messages.info(request, 'A câmera com o ip informado já existe')
+    
+    context['form'] = form
+    return render(request, "camera_create_view.html", context)
+
+class VideoCamera(object):
+    def __init__(self, usuario, senha, ip, porta):
+        self.video = cv2.VideoCapture("rtsp://{}:{}@{}:{}".format(usuario, senha, ip, porta))
+
+    def __del__(self):
+        self.video.release()
+
+    def get_frame(self):
+        ret, frame = self.video.read()
+        #frame_flip = cv2.flip(frame, 1)
+        ret, frame = cv2.imencode('.jpg', frame)
+        return frame.tobytes()
+
+def gen(camera):
+    while True:
+        frame = camera.get_frame()
+        yield (b'--frame\r\n'
+                b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n\r\n')
+
+def video_stream(request, usuario, senha, ip, porta):
+    return StreamingHttpResponse(gen(VideoCamera(usuario, senha, ip, porta)),
+                    content_type='multipart/x-mixed-replace; boundary=frame')

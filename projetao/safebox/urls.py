@@ -18,5 +18,7 @@ urlpatterns=[
     path('ambientes/<email>/visualizar/<nome>', views.ambiente_view, name='ambiente_atual'),
     path("ambientes/<email>/editar/<nome>", views.ambiente_edit_view, name='editar_ambiente'),
     path("payments/<email>/<id>", views.payments, name='payments'),
-    #path(r'paypal/', include('paypal.standard.ipn.urls')),
+    path("ambientes/<email>/<nome>/cameras/cadastrar", views.camera_create_view, name="criar_camera"),
+    path("ambientes/<email>/<nome>/cameras/<ip>", views.camera_view, name="camera_atual"),
+    path("video_stream/<usuario>/<senha>/<ip>/<porta>", views.video_stream, name='video_stream')
 ]

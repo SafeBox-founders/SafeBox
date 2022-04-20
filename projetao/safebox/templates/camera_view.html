@@ -9,7 +9,7 @@
 
         <title>
             {% block title %}
-                {{ ambiente.nome }}
+                {{ camera.ip }}
             {% endblock title %}
         </title>
     </head>
@@ -63,50 +63,15 @@
             <div class="col-sm-6 card text-blue bg-dark mb-3 special-card" style="max-width: 23rem;">
               <div class="card-body">
                   <div class="main" id="div_client_info">
-                        <b>Nome:</b> {{ ambiente.nome }}<br/>
-                        <b>Nº de câmeras:</b> {{ ambiente.numero_cameras }}<br/>
+                        <b>Nome:</b> {{ camera.nome }}<br/>
+                        <b>Ip:</b> {{camera.ip }}<br/>
+                        <b>Ambiente:</b> {{ambiente_name}}<br/>
+                        <b>Nº de boundingbox:</b> {{ camera.num_boundingbox }}<br/>
                     </div>
               </div>
             </div>
         </div>
-        <div class="container">
-            <div class ="row justify-content-center">
-                {% block content %}
-                    {% for cam  in cameras %}
-                        <div class="card col-sm-6 text-white border-light bg-dark mb-3  special-card " style="max-width: 11rem;">
-                            <div class="card-header">
-                                {{ cam.nome }}
-                                {{ cam.ip }}
-                            </div>
-                            <p class="card-text">
-                                <form method="post" >
-                                {% csrf_token %}
-                                <input type="submit" class="btn btn-primary"  value="Visualizar" name="visualizar{{cam.ip}}"/>
-                                </form>
-                            </p>
-                        </div>
-                        <div class="col-sm-6" style="max-width: 1rem;"></div>
-                    {% endfor %}
-                {% endblock %}
-            </div>
-        </div>
-        <div class="container">
-            <div class="row justify-content-center">
-                <form method="GET" enctype="multipart/form-data" class="mx-3">
-                    {% csrf_token %}
-                    <input type="submit" class="btn btn-primary" value="Editar Ambiente" name="editar_ambiente"/>
-                </form>
-                <form method="POST" enctype="multipart/form-data">
-                    {% csrf_token %}
-                    <input type="submit" class="btn btn-primary" value="Adicionar nova câmera" name="addcam"/>
-                </form>
-            </div>
-        </div>
-
-
+        <img src = "{% url 'video_stream' camera.usuario camera.senha camera.ip camera.porta%}" width="40%" height="40%">
         </br></br></br>
-
-
-
     </body>
 </html>

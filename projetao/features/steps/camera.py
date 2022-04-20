@@ -33,16 +33,27 @@ def step_impl(context):
 def step_impl(context):
     choice = context.browser.find_element_by_name("nome")
     choice.send_keys("teste")
+    camera = Camera.objects.all()
     global ip
-    ip = "179.182.208.247"
+    ip = str(len(camera))
     choice = context.browser.find_element_by_name("ip")
-    choice.send_keys("179.182.208.247")
+    choice.send_keys(ip)
     choice = context.browser.find_element_by_name("usuario")
     choice.send_keys("admin")
     choice = context.browser.find_element_by_name("senha")
     choice.send_keys("9621")
     choice = context.browser.find_element_by_name("porta")
     choice.send_keys("80")
+
+@when("I click on the criar camera button")
+def step_impl(context):
+    button = context.browser.find_element_by_name("criar")
+    button.click()
+
+@then("I go back to an existing ambiente detail page")
+def step_impl(context):
+    nome_ambiente = str(context.browser.session_id)
+    assert context.browser.title == nome_ambiente
 
 @then("I created a camera")
 def step_impl(context):
@@ -62,9 +73,9 @@ def step_impl(context):
 
 @when("I click on visualizar camera")
 def step_impl(context):
-    button = context.browser.find_element_by_name("visualizar"+ip)
+    button = context.browser.find_element_by_name("visualizar"+str(ip))
     button.click()
 
 @then("I go to the camera view")
 def step_impl(context):
-    assert context.browser.title == ip
+    assert context.browser.title == str(ip)

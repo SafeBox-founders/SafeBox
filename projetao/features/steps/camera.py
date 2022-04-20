@@ -18,13 +18,10 @@ use_step_matcher("re")
 @given("I am at an Ambiente view")
 def step_impl(context):
     context.execute_steps(u"""
-        given I am on the Home View
-        when I click on Gerenciar câmeras 
-        and I click on the criar ambiente button
-        and I fill the criar ambiente fields
-        and I click on the criar button
-        then I go to Meus ambientes view
-        and I created a ambiente
+        given I am on ambientes list view
+        and There is a registered ambiente
+        when I click on view a existing ambiente
+        then I go the existing ambiente detail page
         """)
 
 @when("I click on Adicionar nova câmera")

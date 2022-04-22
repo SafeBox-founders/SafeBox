@@ -122,3 +122,9 @@ class Camera(models.Model):
     
     def get_ip(self):
         return self.ip
+
+    def get_nome(self):
+        return self.nome
+
+    def set_nome(self, novo_nome):
+        self.nome = novo_nome

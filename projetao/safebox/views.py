@@ -178,6 +178,9 @@ def payments(request, email, id):
     if variavel == 'Voltar':
         return redirect('visualizar', email)
 
+
+    context['data'] = Cliente.objects.get(email=email)
+
     return render(request, 'payments.html', context)
 
 def assinatura_create_view(request, email):

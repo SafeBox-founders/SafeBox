@@ -68,6 +68,9 @@
                         <b>Ambiente:</b> {{ambiente_name}}<br/>
                         <b>Nº de boundingbox:</b> {{ camera.num_boundingbox }}<br/>
                     </div>
+                  <form method="post" >
+                                {% csrf_token %}
+                                <input type="submit" class="btn btn-primary"  value="Editar" name="editar{{cam.ip}}"/>
               </div>
             </div>
         </div>

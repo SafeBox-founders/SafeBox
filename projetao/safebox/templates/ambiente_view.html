@@ -82,6 +82,7 @@
                                 <form method="post" >
                                 {% csrf_token %}
                                 <input type="submit" class="btn btn-primary"  value="Visualizar" name="visualizar{{cam.ip}}"/>
+                                <input type="submit" onclick="return confirm('Essa câmera será removida! Deseja continuar?')" class="btn btn-danger mt-2"  value="Remover" name="remover{{cam.ip}}"/>
                                 </form>
                             </p>
                         </div>

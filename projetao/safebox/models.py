@@ -105,6 +105,9 @@ class Ambiente(models.Model):
     def get_numero_cameras(self):
         return self.numero_cameras
 
+    def set_nome(self, novo_nome):
+        self.nome = novo_nome
+
     def deactivate(self):
         self.delete()
 
@@ -122,3 +125,9 @@ class Camera(models.Model):
     
     def get_ip(self):
         return self.ip
+
+    def get_nome(self):
+        return self.nome
+
+    def set_nome(self, novo_nome):
+        self.nome = novo_nome

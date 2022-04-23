@@ -20,5 +20,6 @@ urlpatterns=[
     path("payments/<email>/<id>", views.payments, name='payments'),
     path("ambientes/<email>/<nome>/cameras/cadastrar", views.camera_create_view, name="criar_camera"),
     path("ambientes/<email>/<nome>/cameras/<ip>", views.camera_view, name="camera_atual"),
+    path("ambientes/<email>/<nome>/cameras/<ip>/edit", views.camera_edit_view, name='camera_edit'),
     path("video_stream/<usuario>/<senha>/<ip>/<porta>", views.video_stream, name='video_stream')
 ]

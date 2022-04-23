@@ -148,3 +148,11 @@ class CameraTest(TestCase):
         ambiente = Ambiente.objects.get(cliente_id=cliente.id)
         record = Camera.objects.get(ambiente_id=ambiente.id)
         self.assertEqual(record, self.camera)
+
+    def test_Edit_Nome(self):
+        cliente = Cliente.objects.get(email="teste@gmail.com")
+        ambiente = Ambiente.objects.get(cliente_id=cliente.id)
+        camera = Camera.objects.get(ambiente_id=ambiente.id)
+        novo_nome = 'Cam_Teste'
+        camera.set_nome(novo_nome)
+        self.assertEqual(camera.get_nome(), novo_nome)

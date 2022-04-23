@@ -13,5 +13,3 @@ Feature: CRUD of ambiente
         Then I go to the camera view
 
 
-
-    Scenario:

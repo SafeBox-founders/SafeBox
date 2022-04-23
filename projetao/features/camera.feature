@@ -1,4 +1,4 @@
-Feature: CRUD of ambiente
+Feature: CRUD of camera
     Scenario: As a client of the system, I want to create a camera
         Given I am at an Ambiente view
         When I click on Adicionar nova câmera 
@@ -11,5 +11,13 @@ Feature: CRUD of ambiente
         Given I have a created camera
         When I click on visualizar camera
         Then I go to the camera view
+
+    Scenario: As a client of the system, I want to edit a camera
+        Given I have a created camera
+        When I click on editar camera
+        And I fill the editar camera fields
+        Then I click on confirmar edicao
+        And I can see that my camera is edited
+
 
 

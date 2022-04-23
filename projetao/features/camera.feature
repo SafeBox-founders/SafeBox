@@ -11,3 +11,7 @@ Feature: CRUD of ambiente
         Given I have a created camera
         When I click on visualizar camera
         Then I go to the camera view
+
+
+
+    Scenario:

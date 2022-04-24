@@ -6,7 +6,7 @@ from time import sleep
 import django
 os.environ.setdefault("DJANGO_SETTINGS_MODULE","projetao.settings")
 django.setup()
-sys.path.append("/home/battist/PycharmProjects/SafeBox")
+sys.path.append("/Documentos/SafeBox")
 from os import path
 from behave import *
 from pandas import options
@@ -96,3 +96,34 @@ def step_impl(context):
 def step_impl(context):
     confirm = context.browser.switch_to.alert
     confirm.accept()
+
+@when("I click on editar camera")
+def step_impl(context):
+    button = context.browser.find_element_by_name("editar"+str(ip))
+    button.click()
+
+@when("I fill the editar camera fields")
+def step_impl(context):
+    camera = Camera.objects.all()
+    global ip
+    ip = str(len(camera))
+    choice = context.browser.find_element_by_name("ip")
+    choice.send_keys(ip)
+    choice = context.browser.find_element_by_name("nome")
+    choice.send_keys("teste_novo")
+    choice = context.browser.find_element_by_name("usuario")
+    choice.send_keys("admin")
+    choice = context.browser.find_element_by_name("senha")
+    choice.send_keys("9621")
+    choice = context.browser.find_element_by_name("porta")
+    choice.send_keys("80")
+
+@Then("I click on confirmar edicao")
+def step_impl(context):
+    button = context.browser.find_element_by_name("confirmar editar")
+    button.click()
+
+@Then("I can see that my camera is edited")
+def step_impl(context):
+    camera = Camera.objects.all()
+    assert list(camera.filter(nome='teste_novo')) != []

@@ -1,0 +1,87 @@
+{% load static %}
+{% load crispy_forms_tags %}
+
+<html>
+    <head>
+        <!---bootstrap--->
+        <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+        <link rel="stylesheet" href="{% static 'fa/css/all.min.css' %}">
+        <script src="{% static 'js/bootstrap.min.js' %}"></script>
+
+        <title>
+            {% block title %}
+                Editar Câmera
+            {% endblock title %}
+        </title>
+    </head>
+
+    <body class="text-center">
+
+        <style>
+            .fix-size {
+                width: 100%;
+            }
+            body {
+              color: #fff;
+              height: 100%;
+              background-color: #333;
+              background-image: url(https://i.ibb.co/pXn5JPj/background.png);
+              background-repeat: no-repeat;
+              background-position: bottom left;
+            }
+        </style>
+
+        <!--- nav bar --->
+
+        <nav class="navbar navbar-expand-lg navbar-dark" style="background-color: #386bc9">
+
+          <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+
+          <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+            <div class="navbar-nav">
+              <a class="nav-item nav-link" href="/home/{{data.email}}" name="tela_inicial">Home</a>
+              <a class="nav-item nav-link" href="/visualizar/{{data.email}}" name="visualizar_perfil">Perfil</a>
+              <a class="nav-item nav-link" href="/ambientes/{{data.email}}" name="gerenciar_câmeras">Gerenciar câmeras</a>
+              <a class="nav-item nav-link" href="#" name="relatorios">Relatórios</a>
+              <a class="nav-item nav-link" href="/" name="sair">Sair</a>
+            </div>
+          </div>
+        </nav>
+
+        <div class="main">
+
+            </br></br></br></br>
+
+                <h1>Editar Câmera</h1>
+
+            </br></br></br>
+
+            <div class="container">
+                <div class="row justify-content-center">Editando Câmera</div>
+                <div class="row justify-content-center">
+                    <form method="POST" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        {{ form|crispy }}
+                        <input type="submit" class="btn btn-primary fix-size" value="Confirmar Edição" name="confirmar editar"/>
+                    </form>
+                </div>
+                <div class="row justify-content-center">
+                    <form method="GET" enctype="multipart/form-data">
+                        <input type="submit" class="btn btn-danger fix-size" value="Cancelar" name="cancelar"/>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        {% if messages %}
+        <ul class="messages">
+            {% for message in messages %}
+            <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+            {% endfor %}
+        </ul>
+        {% endif %}
+
+    </body>
+</html>

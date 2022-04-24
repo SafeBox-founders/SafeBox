@@ -1,4 +1,4 @@
-Feature: CRUD of ambiente
+Feature: CRUD of camera
     Scenario: As a client of the system, I want to create a camera
         Given I am at an Ambiente view
         When I click on Adicionar nova câmera
@@ -26,3 +26,11 @@ Feature: CRUD of ambiente
         And I can see the message confirm for remover camera
         When I click on confirm button 'OK' to remover camera
         Then I go back to an existing ambiente detail page
+        
+    Scenario: As a client of the system, I want to edit a camera
+        Given I have a created camera
+        When I click on editar camera
+        And I fill the editar camera fields
+        Then I click on confirmar edicao
+        And I can see that my camera is edited
+

@@ -85,6 +85,12 @@
                                 <input type="submit" onclick="return confirm('Essa câmera será removida! Deseja continuar?')" class="btn btn-danger mt-2"  value="Remover" name="remover{{cam.ip}}"/>
                                 </form>
                             </p>
+                            <p class="card-text">
+                                <form method="post" >
+                                {% csrf_token %}
+                                <input type="submit" class="btn btn-primary"  value="Editar" name="editar{{cam.ip}}"/>
+                                </form>
+                            </p>
                         </div>
                         <div class="col-sm-6" style="max-width: 1rem;"></div>
                     {% endfor %}

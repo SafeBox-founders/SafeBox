@@ -178,6 +178,9 @@ def payments(request, email, id):
     if variavel == 'Voltar':
         return redirect('visualizar', email)
 
+
+    context['data'] = Cliente.objects.get(email=email)
+
     return render(request, 'payments.html', context)
 
 def assinatura_create_view(request, email):
@@ -317,6 +320,10 @@ def ambiente_view(request, email, nome):
             return redirect('ambiente_atual', email, nome)
 
 
+        action_edit = request.POST.get('editar' + str(cam.get_ip()))
+        if action_edit == 'Editar':
+            return redirect('camera_edit', email, nome, cam.get_ip())
+
     if ambiente != None and len(ambiente) != 0:
         for amb in ambiente:
             context['ambiente'] = amb
@@ -350,8 +357,8 @@ def ambiente_edit_view(request, email, nome):
 
     try:
         if form.is_valid() and not flag_amb_existente:
-            ambiente.delete()
-            form.save()
+            ambiente[0].set_nome(form['nome'].value())
+            ambiente[0].save()
             return redirect('ambientes', email)
         elif (form.is_valid() and flag_amb_existente):
             raise ValidationError('errou')
@@ -371,6 +378,9 @@ def camera_view(request, email, nome, ip):
     cameras = Camera.objects.all()
     camera = cameras.filter(ambiente_id = ambiente.id, ip = ip)
     context['ambiente_name'] = nome
+    context['camera'] = camera
+
+
     if camera != None and len(camera) != 0:
         for cam in camera:
             context['camera'] = cam
@@ -383,7 +393,56 @@ def camera_view(request, email, nome, ip):
 
             break
 
+
     return render(request, "camera_view.html", context)
+
+
+def camera_edit_view(request, email, nome, ip):
+    action_cancelar = request.GET.get('cancelar')
+    if action_cancelar == "Cancelar":
+        return redirect("ambientes", email)
+
+    context = {}
+    context['data'] = Cliente.objects.get(email=email)
+    ambientes = Ambiente.objects.all()
+    ambiente = ambientes.get(cliente_id=context['data'].id, nome=nome)
+    cameras = Camera.objects.all()
+    camera = cameras.filter(ambiente_id=ambiente.id, ip=ip)
+    context['ambiente_name'] = nome
+    camera = camera[0]
+    context['camera'] = camera
+
+    form = CameraForm(request.POST or None, initial={'ip':camera.ip,
+                                                     'usuario':camera.usuario,
+                                                     'senha': camera.senha,
+                                                     'porta':camera.porta,
+                                                     'ambiente_id':camera.ambiente_id,
+                                                     'num_boundingbox':camera.num_boundingbox})
+
+
+    flag_cam_existente = False
+    if (camera != None) and (camera != []):
+        for cam in cameras:
+            if cam.get_nome() == form['nome'].value():
+                flag_cam_existente = True
+                break
+
+
+
+    try:
+        if form.is_valid() and not flag_cam_existente:
+            camera.delete()
+            form.save()
+            return redirect('ambientes', email)
+        elif (form.is_valid() and flag_cam_existente):
+            raise ValidationError('errou')
+
+    except ValidationError:
+        messages.info(request, 'Câmera com esse nome já existe ou o nome não está sendo modificado!')
+
+    context['form'] = form
+    context['nome_in_edit'] = nome
+    return render(request, "camera_edit_view.html", context)
 
 def camera_create_view(request, email, nome):
     context = {}

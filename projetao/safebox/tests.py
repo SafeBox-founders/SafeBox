@@ -148,3 +148,10 @@ class CameraTest(TestCase):
         ambiente = Ambiente.objects.get(cliente_id=cliente.id)
         record = Camera.objects.get(ambiente_id=ambiente.id)
         self.assertEqual(record, self.camera)
+
+    def test_delete_camera(self):
+        camera_ip = self.camera.get_ip()
+        self.camera.delete()
+
+        with self.assertRaises(Camera.DoesNotExist):
+            Camera.objects.get(ip=camera_ip)

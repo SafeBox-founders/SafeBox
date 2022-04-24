@@ -71,6 +71,7 @@ def step_impl(context):
         and I created a camera
         """)
 
+@given("I click on visualizar camera")
 @when("I click on visualizar camera")
 def step_impl(context):
     button = context.browser.find_element_by_name("visualizar"+str(ip))
@@ -79,3 +80,19 @@ def step_impl(context):
 @then("I go to the camera view")
 def step_impl(context):
     assert context.browser.title == str(ip)
+
+@given("I click on remover camera")
+def step_impl(context):
+    remove = context.browser.find_element_by_name("remover"+str(ip))
+    remove.click()
+
+@given("I can see the message confirm for remover camera")
+def step_impl(context):
+    confirm = context.browser.switch_to.alert
+    texto = confirm.text
+    assert texto == "Essa câmera será removida! Deseja continuar?"
+
+@When("I click on confirm button \'OK\' to remover camera")
+def step_impl(context):
+    confirm = context.browser.switch_to.alert
+    confirm.accept()

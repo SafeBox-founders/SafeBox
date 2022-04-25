@@ -311,8 +311,14 @@ def ambiente_view(request, email, nome):
 
     for cam in camera:
         action_criar = request.POST.get('visualizar' + str(cam.get_ip()))
+        action_remover = request.POST.get('remover' + str(cam.get_ip()))
         if action_criar == 'Visualizar':
             return redirect('camera_atual', email, nome, cam.get_ip())
+        if action_remover == "Remover":
+            remover_camera(email, nome, cam.get_ip())
+            messages.success(request, "Câmera", cam.get_ip(), " removida com sucesso.")
+            return redirect('ambiente_atual', email, nome)
+
 
         action_edit = request.POST.get('editar' + str(cam.get_ip()))
         if action_edit == 'Editar':
@@ -378,6 +384,13 @@ def camera_view(request, email, nome, ip):
     if camera != None and len(camera) != 0:
         for cam in camera:
             context['camera'] = cam
+
+            action_remover = request.POST.get('remover' + str(cam.get_ip()))
+            if action_remover == "Remover":
+                remover_camera(email, nome, cam.get_ip())
+                messages.success(request, "Câmera", cam.get_ip(), " removida com sucesso.")
+                return redirect('ambiente_atual',email, nome)
+
             break
 
 
@@ -455,6 +468,16 @@ def camera_create_view(request, email, nome):
     
     context['form'] = form
     return render(request, "camera_create_view.html", context)
+
+def remover_camera(email, nome, cam_ip):
+    cliente = Cliente.objects.get(email=email)
+    ambientes = Ambiente.objects.all()
+    ambiente = ambientes.get(cliente_id=cliente.id, nome=nome)
+    cameras = Camera.objects.all()
+    camera = cameras.filter(ambiente_id=ambiente.id, ip=cam_ip)
+
+    if camera != None and len(camera) > 0:
+        camera.delete()
 
 class VideoCamera(object):
     def __init__(self, usuario, senha, ip, porta):

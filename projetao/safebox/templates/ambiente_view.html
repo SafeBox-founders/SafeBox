@@ -64,7 +64,7 @@
               <div class="card-body">
                   <div class="main" id="div_client_info">
                         <b>Nome:</b> {{ ambiente.nome }}<br/>
-                        <b>Nº de câmeras:</b> {{ ambiente.numero_cameras }}<br/>
+                        <b>Nº de câmeras:</b> {{ cameras.count }}<br/>
                     </div>
               </div>
             </div>
@@ -82,6 +82,7 @@
                                 <form method="post" >
                                 {% csrf_token %}
                                 <input type="submit" class="btn btn-primary"  value="Visualizar" name="visualizar{{cam.ip}}"/>
+                                <input type="submit" onclick="return confirm('Essa câmera será removida! Deseja continuar?')" class="btn btn-danger mt-2"  value="Remover" name="remover{{cam.ip}}"/>
                                 </form>
                             </p>
                             <p class="card-text">

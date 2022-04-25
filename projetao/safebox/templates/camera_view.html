@@ -67,7 +67,14 @@
                         <b>Ip:</b> {{camera.ip }}<br/>
                         <b>Ambiente:</b> {{ambiente_name}}<br/>
                         <b>Nº de boundingbox:</b> {{ camera.num_boundingbox }}<br/>
-                  </div>
+                    </div>
+
+                    <div>
+                        <form method="post">
+                            {% csrf_token %}
+                            <input type="submit" onclick="return confirm('Essa câmera será removida! Deseja continuar?')" class="btn btn-danger mt-4" value="Remover" name="remover{{camera.ip}}"/>
+                        </form>
+                    </div>
               </div>
             </div>
         </div>

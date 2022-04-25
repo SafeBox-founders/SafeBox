@@ -149,6 +149,13 @@ class CameraTest(TestCase):
         record = Camera.objects.get(ambiente_id=ambiente.id)
         self.assertEqual(record, self.camera)
 
+    def test_delete_camera(self):
+        camera_ip = self.camera.get_ip()
+        self.camera.delete()
+
+        with self.assertRaises(Camera.DoesNotExist):
+            Camera.objects.get(ip=camera_ip)
+            
     def test_Edit_Nome(self):
         cliente = Cliente.objects.get(email="teste@gmail.com")
         ambiente = Ambiente.objects.get(cliente_id=cliente.id)
@@ -156,3 +163,4 @@ class CameraTest(TestCase):
         novo_nome = 'Cam_Teste'
         camera.set_nome(novo_nome)
         self.assertEqual(camera.get_nome(), novo_nome)
+

@@ -131,3 +131,15 @@ class Camera(models.Model):
 
     def set_nome(self, novo_nome):
         self.nome = novo_nome
+
+class BoundingBox(models.Model):
+    camera_ip = models.ForeignKey(Camera, to_field="ip", on_delete=models.CASCADE)
+    x1 = models.IntegerField(null=False)
+    x2 = models.IntegerField(null=False)
+    y1 = models.IntegerField(null=False)
+    y2 = models.IntegerField(null=False)
+    num_max_pessoas = models.IntegerField(null=False)
+    num_min_pessoas = models.IntegerField(null=False)
+    horario_inicial = models.TimeField(null=False)
+    horario_final = models.TimeField(null=False)
+    cor = models.IntegerField(null=False)

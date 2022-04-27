@@ -112,7 +112,7 @@ class Ambiente(models.Model):
         self.delete()
 
 class Camera(models.Model):
-    ip = models.CharField(max_length=255, null=False)
+    ip = models.CharField(max_length=255, null=False, unique=True)
     nome = models.CharField(max_length=255, null=False)
     num_boundingbox = models.IntegerField(null=False,default=0)
     ambiente_id = models.ForeignKey(Ambiente, to_field="id", on_delete=models.CASCADE)

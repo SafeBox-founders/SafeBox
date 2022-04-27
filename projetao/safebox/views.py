@@ -379,6 +379,7 @@ def camera_view(request, email, nome, ip):
     camera = cameras.filter(ambiente_id = ambiente.id, ip = ip)
     context['ambiente_name'] = nome
     context['camera'] = camera
+    context['bounding_box'] = [[50, 50, 70, 70, 651919], [80, 80, 100, 100, 556519]]
 
 
     if camera != None and len(camera) != 0:

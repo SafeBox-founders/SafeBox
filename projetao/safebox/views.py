@@ -397,9 +397,8 @@ def camera_view(request, email, nome, ip):
 
             if action_criar_bounding_box == "Criar Bounding Box":
                 bounding_box_form.save()
-                #return redirect('camera_atual',email, nome,context['camera'].ip)
-            break
 
+            break
 
     return render(request, "camera_view.html", context)
 

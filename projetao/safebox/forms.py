@@ -1,6 +1,6 @@
 from unicodedata import name
 from django import forms
-from .models import Ambiente, Assinatura, Camera, Cliente, Plano
+from .models import Ambiente, Assinatura, Camera, Cliente, Plano, BoundingBox
 
 class ClienteForm(forms.ModelForm):
     class Meta:
@@ -31,3 +31,9 @@ class CameraForm(forms.ModelForm):
         model = Camera
         fields = ["ip", "nome", "usuario", "senha", "porta", "ambiente_id", "num_boundingbox"]
         widgets = {"ambiente_id":forms.HiddenInput(), "num_boundingbox":forms.HiddenInput()}
+
+class BoundingBoxForm(forms.ModelForm):
+    class Meta:
+        model = BoundingBox
+        fields = ["camera_ip","x1","y1","x2","y2","num_max_pessoas","num_min_pessoas","horario_inicial","horario_final","cor"]
+        widgets = {"camera_ip":forms.HiddenInput()}

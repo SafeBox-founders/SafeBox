@@ -1,4 +1,5 @@
 {% load static %}
+{% load crispy_forms_tags %}
 
 <html xmlns="http://www.w3.org/1999/html">
     <head>
@@ -72,6 +73,16 @@
                             <input type="submit" onclick="return confirm('Essa câmera será removida! Deseja continuar?')" class="btn btn-danger mt-4" value="Remover" name="remover{{camera.ip}}"/>
                         </form>
                     </div>
+
+                    <div>
+                        <form method="post">
+                            {% csrf_token %}
+                            {{ form_bounding_box|crispy }}
+                            <input type="submit" class="btn btn-primary" value="Criar Bounding Box" name="criarBoundingBox"/>
+                        </form>
+                    </div>
+
+
               </div>
             </div>
         </div>
@@ -82,23 +93,19 @@
             var canvas = document.getElementById("imagemsubshow");
             var context = canvas.getContext("2d");
             var image = document.getElementById("imagemshow");
-            var bounding_boxes = JSON.parse("{{bounding_box}}");
             context.drawImage(image,20,20);
-            for (var bounding_box_iter in bounding_boxes){
-                var bounding_box = bounding_boxes[bounding_box_iter]
-                console.log(bounding_box)
-                var x1 = bounding_box[0]
-                var x2 = bounding_box[2]
-                var y1 = bounding_box[1]
-                var y2 = bounding_box[3]
-                let color = bounding_box[4]
-                context.lineWidth = 5;
-                context.beginPath();
-                context.strokeStyle = '#'+color
-                context.rect(x1,y1,(x2-x1), (y2-y1));
-                context.stroke();
-            }
         </script>
+        <div>
+            {% for b_box in bounding_boxes %}
+                <script type="text/javascript">
+                    context.lineWidth = 5;
+                    context.beginPath();
+                    context.strokeStyle = '#'+{{b_box.cor}}
+                    context.rect({{b_box.x1}},{{b_box.y1}},({{b_box.x2}}-{{b_box.x1}}), ({{b_box.y2}}-{{b_box.y1}}));
+                    context.stroke();
+                </script>
+            {% endfor %}
+        </div>
         </br></br></br>
 
         <img src='https://i.ibb.co/pXn5JPj/background.png' style='position:fixed;top:0px;left:0px;width:100%;height:100%;z-index:-1;'>

@@ -123,7 +123,11 @@
                 <div class="col-sm">
                     {% block content %}
                         {% for box in bounding_boxes %}
-                                <h1>{{ box.id }}</h1>
+                            <h1>{{ box.id }}</h1>
+                            <form method="post">
+                                {% csrf_token %}
+                                <input type="submit" class="btn btn-primary" value="Remover Bounding Box" name="removerBoundingBox{{box.id}}"/>
+                            </form>
                         {% endfor %}
                     {% endblock %}
                 </div>

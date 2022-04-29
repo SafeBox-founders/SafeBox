@@ -36,4 +36,4 @@ class BoundingBoxForm(forms.ModelForm):
     class Meta:
         model = BoundingBox
         fields = ["camera_ip","x1","y1","x2","y2","num_max_pessoas","num_min_pessoas","horario_inicial","horario_final","cor"]
-        widgets = {"camera_ip":forms.HiddenInput()}
+        widgets = {"camera_ip": forms.HiddenInput()}

@@ -304,7 +304,7 @@ def ambiente_view(request, email, nome):
     camera = cameras.filter(ambiente_id = ambiente[0].id)
     context['cameras'] = []
     if camera != None and len(camera) != 0:
-        context['cameras']=camera
+        context['cameras'] = camera
 
     action_criar =  request.POST.get('addcam')
     if action_criar == 'Adicionar nova câmera':
@@ -398,6 +398,13 @@ def camera_view(request, email, nome, ip):
             if action_criar_bounding_box == "Criar Bounding Box":
                 bounding_box_form.save()
 
+
+            for box in bounding_boxes:
+                action_remover_bounding_box = request.POST.get('removerBoundingBox' + str(box.id))
+                if action_remover_bounding_box == 'Remover Bounding Box':
+                    box.delete()
+                    return render(request, "camera_view.html", context)
+                break
             break
 
     return render(request, "camera_view.html", context)
@@ -474,6 +481,12 @@ def camera_create_view(request, email, nome):
     
     context['form'] = form
     return render(request, "camera_create_view.html", context)
+
+def remover_bounding_box(bounding_box_id):
+    bounding_box = BoundingBox.objects.get(id=bounding_box_id)[0]
+
+    if bounding_boxes != None:
+        bounding_box.delete()
 
 def remover_camera(email, nome, cam_ip):
     cliente = Cliente.objects.get(email=email)

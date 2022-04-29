@@ -397,15 +397,15 @@ def camera_view(request, email, nome, ip):
 
             if action_criar_bounding_box == "Criar Bounding Box":
                 bounding_box_form.save()
+                return redirect('camera_atual',email, nome, ip)
 
 
             for box in bounding_boxes:
                 action_remover_bounding_box = request.POST.get('removerBoundingBox' + str(box.id))
                 if action_remover_bounding_box == 'Remover Bounding Box':
                     box.delete()
-                    return render(request, "camera_view.html", context)
-                break
-            break
+                    return redirect('camera_atual', email, nome, ip)
+
 
     return render(request, "camera_view.html", context)
 

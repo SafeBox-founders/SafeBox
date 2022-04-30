@@ -123,11 +123,41 @@
                 <div class="col-sm">
                     {% block content %}
                         {% for box in bounding_boxes %}
-                            <h1>{{ box.id }}</h1>
-                            <form method="post">
-                                {% csrf_token %}
-                                <input type="submit" class="btn btn-primary" value="Remover Bounding Box" name="removerBoundingBox{{box.id}}"/>
-                            </form>
+                            <div class="card col-sm-6 text-white border-light bg-dark mb-3  special-card " style="max-width: 11rem;">
+                            <div class="card-header">
+                            <div id = "boundingbox{{box.id}}" name="Box ID:{{box.id}}">
+                                <p><b>Box ID: </b> {{box.id}}</p>
+                                <p><b>Máximo de pessoas: </b> {{box.num_max_pessoas}}</p>
+                                <p><b>Minimo de pessoas: </b> {{box.num_min_pessoas}}</p>
+                                <p><b>Horário inicial: </b> {{box.horario_inicial}}</p>
+                                <p><b>Horário final: </b> {{box.horario_final}}</p>
+                                <p><b>X1: </b> {{box.x1}} ,  <b>X2</b> {{box.x2}}</p>
+                                <p><b>Y1: </b> {{box.y1}} ,  <b>Y2</b> {{box.y2}}</p>
+
+                                <form method="post">
+                                    {% csrf_token %}
+                                    <input type="submit" class="btn btn-primary" value="Remover Box" name="removerBoundingBox{{box.id}}"/>
+                                </form>
+
+
+                            </div>
+                            <input type="button" class="btn btn-danger mt-4" value="Ver Box {{box.id}}" name="verbox{{box.id}}" id="verbox{{box.id}}"/>
+                            </div>
+                            </div>
+
+                        <script type="text/javascript">
+                            var target{{box.id}} = document.getElementById("boundingbox{{box.id}}");
+                            var btn{{box.id}} = document.getElementById("verbox{{box.id}}");
+                            btn{{box.id}}.onclick = function () {
+
+                            if (target{{box.id}}.style.display == "none") {
+                                target{{box.id}}.style.display = "block";
+                            } else {
+                                target{{box.id}}.style.display  = "none";
+                                 }
+                            };
+                        </script>
+
                         {% endfor %}
                     {% endblock %}
                 </div>

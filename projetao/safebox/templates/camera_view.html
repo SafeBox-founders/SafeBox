@@ -125,7 +125,7 @@
                         {% for box in bounding_boxes %}
                             <div class="card col-sm-6 text-white border-light bg-dark mb-3  special-card " style="max-width: 11rem;">
                             <div class="card-header">
-                            <div id = "boundingbox{{box.id}}">
+                            <div id = "boundingbox{{box.id}}" name="Box ID:{{box.id}}">
                                 <p><b>Box ID: </b> {{box.id}}</p>
                                 <p><b>Máximo de pessoas: </b> {{box.num_max_pessoas}}</p>
                                 <p><b>Minimo de pessoas: </b> {{box.num_min_pessoas}}</p>

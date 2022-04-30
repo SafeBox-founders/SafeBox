@@ -60,5 +60,6 @@ def step_impl(context):
 
 @Then("I can see the bounding box information")
 def step_impl(context):
-    box = context.browser.find_element_by_name("Box ID:")
+    boxes = BoundingBox.objects.all()
+    box = context.browser.find_element_by_name("Box ID:"+str(boxes[len(boxes)-1].id))
     assert box != None

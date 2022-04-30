@@ -1,4 +1,5 @@
 {% load static %}
+{% load crispy_forms_tags %}
 
 <html xmlns="http://www.w3.org/1999/html">
     <head>
@@ -56,6 +57,7 @@
 
         </br></br></br>
 
+
        <div class="row justify-content-center">
             <div class="col-sm-6 card text-blue bg-dark mb-3 special-card" style="max-width: 23rem;">
               <div class="card-body">
@@ -75,7 +77,84 @@
               </div>
             </div>
         </div>
-        <img src = "{% url 'video_stream' camera.usuario camera.senha camera.ip camera.porta%}" width="40%" height="40%">
+
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-sm">
+                    <div class="col-sm-6 card text-blue bg-dark mb-3 special-card" style="max-width: 23rem;">
+
+                        <input type="button" class="btn btn-danger mt-4" value="Adicionar nova Bounding Box" name="nova" id="nova"/>
+
+                      <div class="card-body">
+                          <div class="main" id="">
+                            <div id="divcam">
+                                 <form method="post">
+                                     {% csrf_token %}
+                                    {{ form_bounding_box|crispy }}
+                                    <input type="submit" class="btn btn-primary" value="Criar Bounding Box" name="criarBoundingBox"/>
+                                </form>
+                            </div>
+                          </div>
+                      </div>
+                    </div>
+                </div>
+
+
+                <script type="text/javascript">
+                    var targetDiv = document.getElementById("divcam");
+                    var btn = document.getElementById("nova");
+                    btn.onclick = function () {
+
+                    if (targetDiv.style.display == "none") {
+                        targetDiv.style.display = "block";
+                    } else {
+                        targetDiv.style.display  = "none";
+                         }
+                    };
+                </script>
+
+                <!---<img src = "{% url 'video_stream' camera.usuario camera.senha camera.ip camera.porta%}" width="40%" height="40%">--->
+
+                <div class="col-sm">
+                    <img id = "imagemshow" src = "https://www.eusemfronteiras.com.br/wp-content/uploads/2019/11/33525351_m-810x540.jpg" width="40%" height="40%" style = "display:none;">
+                    <canvas id="imagemsubshow" width="800" height="600"></canvas>
+                </div>
+
+                <div class="col-sm">
+                    {% block content %}
+                        {% for box in bounding_boxes %}
+                            <h1>{{ box.id }}</h1>
+                            <form method="post">
+                                {% csrf_token %}
+                                <input type="submit" class="btn btn-primary" value="Remover Bounding Box" name="removerBoundingBox{{box.id}}"/>
+                            </form>
+                        {% endfor %}
+                    {% endblock %}
+                </div>
+
+            </div>
+        </div>
+
+
+        <script type="text/javascript">
+            var canvas = document.getElementById("imagemsubshow");
+            var context = canvas.getContext("2d");
+            var image = document.getElementById("imagemshow");
+            context.drawImage(image,20,20);
+        </script>
+
+        <div>
+            {% for b_box in bounding_boxes %}
+                <script type="text/javascript">
+                    context.lineWidth = 5;
+                    context.beginPath();
+                    context.strokeStyle = '#'+{{b_box.cor}}
+                    context.rect({{b_box.x1}},{{b_box.y1}},({{b_box.x2}}-{{b_box.x1}}), ({{b_box.y2}}-{{b_box.y1}}));
+                    context.stroke();
+                </script>
+            {% endfor %}
+        </div>
+
         </br></br></br>
 
         <img src='https://i.ibb.co/pXn5JPj/background.png' style='position:fixed;top:0px;left:0px;width:100%;height:100%;z-index:-1;'>

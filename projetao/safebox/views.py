@@ -1,10 +1,11 @@
+from django.core import serializers
 from os import name
 from django.shortcuts import render, redirect, HttpResponse
 from django.core.exceptions import ValidationError
 from django.urls import reverse
 from django.contrib import messages
-from .models import Camera, Cliente, Assinatura, Plano, Ambiente
-from .forms import AssinaturaForm, CameraForm, ClienteForm, ClienteLoginForm, AmbienteForm
+from .models import Camera, Cliente, Assinatura, Plano, Ambiente, BoundingBox
+from .forms import AssinaturaForm, CameraForm, ClienteForm, ClienteLoginForm, AmbienteForm, BoundingBoxForm
 import cv2
 from django.http import StreamingHttpResponse
 
@@ -303,7 +304,7 @@ def ambiente_view(request, email, nome):
     camera = cameras.filter(ambiente_id = ambiente[0].id)
     context['cameras'] = []
     if camera != None and len(camera) != 0:
-        context['cameras']=camera
+        context['cameras'] = camera
 
     action_criar =  request.POST.get('addcam')
     if action_criar == 'Adicionar nova câmera':
@@ -378,20 +379,32 @@ def camera_view(request, email, nome, ip):
     cameras = Camera.objects.all()
     camera = cameras.filter(ambiente_id = ambiente.id, ip = ip)
     context['ambiente_name'] = nome
-    context['camera'] = camera
-
+    context['camera'] = camera[0]
+    bounding_box_form = BoundingBoxForm(request.POST or None, initial={"camera_ip": ip})
+    context['form_bounding_box'] = bounding_box_form
+    bounding_boxes = BoundingBox.objects.all().filter(camera_ip=ip)
+    context['bounding_boxes'] = bounding_boxes
 
     if camera != None and len(camera) != 0:
         for cam in camera:
             context['camera'] = cam
-
             action_remover = request.POST.get('remover' + str(cam.get_ip()))
+            action_criar_bounding_box = request.POST.get('criarBoundingBox')
             if action_remover == "Remover":
                 remover_camera(email, nome, cam.get_ip())
                 messages.success(request, "Câmera", cam.get_ip(), " removida com sucesso.")
                 return redirect('ambiente_atual',email, nome)
 
-            break
+            if action_criar_bounding_box == "Criar Bounding Box":
+                bounding_box_form.save()
+                return redirect('camera_atual',email, nome, ip)
+
+
+            for box in bounding_boxes:
+                action_remover_bounding_box = request.POST.get('removerBoundingBox' + str(box.id))
+                if action_remover_bounding_box == 'Remover Bounding Box':
+                    box.delete()
+                    return redirect('camera_atual', email, nome, ip)
 
 
     return render(request, "camera_view.html", context)
@@ -468,6 +481,12 @@ def camera_create_view(request, email, nome):
     
     context['form'] = form
     return render(request, "camera_create_view.html", context)
+
+def remover_bounding_box(bounding_box_id):
+    bounding_box = BoundingBox.objects.get(id=bounding_box_id)[0]
+
+    if bounding_boxes != None:
+        bounding_box.delete()
 
 def remover_camera(email, nome, cam_ip):
     cliente = Cliente.objects.get(email=email)

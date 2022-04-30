@@ -56,3 +56,9 @@ def step_impl(context):
     boxes = len(BoundingBox.objects.all())
     assert boxes == boundingBoxes+1
 
+
+
+@Then("I can see the bounding box information")
+def step_impl(context):
+    box = context.browser.find_element_by_name("Box ID:")
+    assert box != None

@@ -402,7 +402,7 @@ def camera_view(request, email, nome, ip):
 
             for box in bounding_boxes:
                 action_remover_bounding_box = request.POST.get('removerBoundingBox' + str(box.id))
-                if action_remover_bounding_box == 'Remover Bounding Box':
+                if action_remover_bounding_box == 'Remover Box':
                     box.delete()
                     return redirect('camera_atual', email, nome, ip)
 

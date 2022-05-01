@@ -83,11 +83,11 @@
                 <div class="col-sm">
                     <div class="col-sm-6 card text-blue bg-dark mb-3 special-card" style="max-width: 23rem;">
 
-                        <input type="button" class="btn btn-danger mt-4" value="Adicionar nova Bounding Box" name="nova" id="nova"/>
+                        <input type="button" class="btn btn-danger mt-4" value="Demarcar zona segura" name="nova" id="nova"/>
 
                       <div class="card-body">
                           <div class="main" id="">
-                            <div id="divcam">
+                            <div id="divcam" style="display:none;">
                                  <form method="post">
                                      {% csrf_token %}
                                     {{ form_bounding_box|crispy }}
@@ -96,6 +96,13 @@
                             </div>
                           </div>
                       </div>
+                        {% if messages %}
+                        <ul class="messages">
+                            {% for message in messages %}
+                            <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+                            {% endfor %}
+                        </ul>
+                        {% endif %}
                     </div>
                 </div>
 
@@ -113,11 +120,9 @@
                     };
                 </script>
 
-                <!---<img src = "{% url 'video_stream' camera.usuario camera.senha camera.ip camera.porta%}" width="40%" height="40%">--->
-
                 <div class="col-sm">
-                    <img id = "imagemshow" src = "https://www.eusemfronteiras.com.br/wp-content/uploads/2019/11/33525351_m-810x540.jpg" width="40%" height="40%" style = "display:none;">
-                    <canvas id="imagemsubshow" width="800" height="600"></canvas>
+                    <img id="imagemshow" src = "{% url 'video_stream' camera.usuario camera.senha camera.ip camera.porta%}">
+                    <!---<img id = "imagemshow" src = "https://www.eusemfronteiras.com.br/wp-content/uploads/2019/11/33525351_m-810x540.jpg" width="40%" height="40%" style = "display:none;">--->
                 </div>
 
                 <div class="col-sm">
@@ -125,7 +130,7 @@
                         {% for box in bounding_boxes %}
                             <div class="card col-sm-6 text-white border-light bg-dark mb-3  special-card " style="max-width: 11rem;">
                             <div class="card-header">
-                            <div id = "boundingbox{{box.id}}" name="Box ID:{{box.id}}">
+                            <div id = "boundingbox{{box.id}}" name="Box ID:{{box.id}}" style="display:none;">
                                 <p><b>Box ID: </b> {{box.id}}</p>
                                 <p><b>Máximo de pessoas: </b> {{box.num_max_pessoas}}</p>
                                 <p><b>Minimo de pessoas: </b> {{box.num_min_pessoas}}</p>
@@ -164,27 +169,6 @@
 
             </div>
         </div>
-
-
-        <script type="text/javascript">
-            var canvas = document.getElementById("imagemsubshow");
-            var context = canvas.getContext("2d");
-            var image = document.getElementById("imagemshow");
-            context.drawImage(image,20,20);
-        </script>
-
-        <div>
-            {% for b_box in bounding_boxes %}
-                <script type="text/javascript">
-                    context.lineWidth = 5;
-                    context.beginPath();
-                    context.strokeStyle = '#'+{{b_box.cor}}
-                    context.rect({{b_box.x1}},{{b_box.y1}},({{b_box.x2}}-{{b_box.x1}}), ({{b_box.y2}}-{{b_box.y1}}));
-                    context.stroke();
-                </script>
-            {% endfor %}
-        </div>
-
         </br></br></br>
 
         <img src='https://i.ibb.co/pXn5JPj/background.png' style='position:fixed;top:0px;left:0px;width:100%;height:100%;z-index:-1;'>

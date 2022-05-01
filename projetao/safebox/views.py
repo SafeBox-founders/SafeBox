@@ -1,3 +1,6 @@
+import json
+import os
+
 from django.core import serializers
 from os import name
 from django.shortcuts import render, redirect, HttpResponse
@@ -8,6 +11,9 @@ from .models import Camera, Cliente, Assinatura, Plano, Ambiente, BoundingBox
 from .forms import AssinaturaForm, CameraForm, ClienteForm, ClienteLoginForm, AmbienteForm, BoundingBoxForm
 import cv2
 from django.http import StreamingHttpResponse
+
+width = 0
+height = 0
 
 def index(request):
     return HttpResponse("Safe Box")
@@ -395,10 +401,31 @@ def camera_view(request, email, nome, ip):
                 messages.success(request, "Câmera", cam.get_ip(), " removida com sucesso.")
                 return redirect('ambiente_atual',email, nome)
 
+            global width
+            global height
+            #width = 810
+            #height = 540
             if action_criar_bounding_box == "Criar Bounding Box":
-                bounding_box_form.save()
-                return redirect('camera_atual',email, nome, ip)
-
+                if (bounding_box_form.is_valid()):
+                    if (0 > int(bounding_box_form['x1'].value()) or int(bounding_box_form['x1'].value()) > width):
+                        messages.info(request,
+                                      "Valor de X1 negativo ou superior ao tamanho da imagem, valor máximo:" + str(
+                                          width))
+                    elif (0 > int(bounding_box_form['y1'].value()) or int(bounding_box_form['y1'].value()) > height):
+                        messages.info(request,
+                                      "Valor de Y1 negativo ou superior ao tamanho da imagem, valor máximo:" + str(
+                                          height))
+                    elif (0 > int(bounding_box_form['x2'].value()) or int(bounding_box_form['x2'].value()) > width):
+                        messages.info(request,
+                                      "Valor de X2 negativo ou superior ao tamanho da imagem, valor máximo:" + str(
+                                          width))
+                    elif (0 > int(bounding_box_form['y2'].value()) or int(bounding_box_form['y2'].value()) > height):
+                        messages.info(request,
+                                      "Valor de Y2 negativo ou superior ao tamanho da imagem, valor máximo:" + str(
+                                          height))
+                    else:
+                        bounding_box_form.save()
+                        return redirect('camera_atual',email, nome, ip)
 
             for box in bounding_boxes:
                 action_remover_bounding_box = request.POST.get('removerBoundingBox' + str(box.id))
@@ -406,6 +433,13 @@ def camera_view(request, email, nome, ip):
                     box.delete()
                     return redirect('camera_atual', email, nome, ip)
 
+            partitions = {}
+            cwd = os.getcwd()
+            for i in range(len(bounding_boxes)):
+                dict = bounding_boxes[i].to_dict()
+                partitions[str(bounding_boxes[i].id)] = dict
+            with open(os.path.join(cwd, 'jsons', 'camera{}.json'.format(ip)), "w") as out_file:
+                json.dump(partitions, out_file, indent=2)
 
     return render(request, "camera_view.html", context)
 
@@ -485,7 +519,7 @@ def camera_create_view(request, email, nome):
 def remover_bounding_box(bounding_box_id):
     bounding_box = BoundingBox.objects.get(id=bounding_box_id)[0]
 
-    if bounding_boxes != None:
+    if bounding_box != None:
         bounding_box.delete()
 
 def remover_camera(email, nome, cam_ip):
@@ -505,18 +539,31 @@ class VideoCamera(object):
     def __del__(self):
         self.video.release()
 
-    def get_frame(self):
+    def get_frame(self, ip):
         ret, frame = self.video.read()
-        #frame_flip = cv2.flip(frame, 1)
-        ret, frame = cv2.imencode('.jpg', frame)
-        return frame.tobytes()
+        frame_width = int(frame.shape[0]*0.7)
+        frame_height = int(frame.shape[1]*0.7)
+        frame = cv2.resize(frame,(frame_height,frame_width),interpolation=cv2.INTER_AREA)
+        bounding_box = BoundingBox.objects.all().filter(camera_ip = ip)
+        frame_box = frame
+        for i in bounding_box:
+            frame_box = cv2.rectangle(frame_box, (i.x1,i.y1),(i.x2,i.y2),  tuple(int(str(i.cor)[j:j+2], 16) for j in (0, 2, 4)),2)
+        ret, frame_box = cv2.imencode('.jpg', frame_box)
+        set_shape(frame_width, frame_height)
+        return frame_box.tobytes()
 
-def gen(camera):
+def gen(camera, ip):
     while True:
-        frame = camera.get_frame()
+        frame = camera.get_frame(ip)
         yield (b'--frame\r\n'
                 b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n\r\n')
 
 def video_stream(request, usuario, senha, ip, porta):
-    return StreamingHttpResponse(gen(VideoCamera(usuario, senha, ip, porta)),
+    return StreamingHttpResponse(gen(VideoCamera(usuario, senha, ip, porta),ip),
                     content_type='multipart/x-mixed-replace; boundary=frame')
+
+def set_shape(imagem_width, imagem_height):
+    global width
+    width = imagem_width
+    global height
+    height = imagem_height

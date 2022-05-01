@@ -143,3 +143,9 @@ class BoundingBox(models.Model):
     horario_inicial = models.TimeField(null=False)
     horario_final = models.TimeField(null=False)
     cor = models.IntegerField(null=False)
+
+    def to_dict(self):
+        dict = {"y1": str(self.y1), "x1": str(self.x1), "y2": str(self.y2), "x2": str(self.x2),
+                "start": str(self.horario_inicial), "end": str(self.horario_final), "min": str(self.num_min_pessoas),
+                "max": str(self.num_max_pessoas)}
+        return dict

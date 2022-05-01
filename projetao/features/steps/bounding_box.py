@@ -25,6 +25,8 @@ def step_impl(context):
 
 @When("I fill the create bounding box fields")
 def step_impl(context):
+    button = context.browser.find_element_by_name("nova")
+    button.click()
     choice = context.browser.find_element_by_name("x1")
     choice.send_keys(15)
     choice = context.browser.find_element_by_name("x2")
@@ -61,5 +63,5 @@ def step_impl(context):
 @Then("I can see the bounding box information")
 def step_impl(context):
     boxes = BoundingBox.objects.all()
-    box = context.browser.find_element_by_name("Box ID:"+str(boxes[len(boxes)-1].id))
+    box = context.browser.find_element_by_name("verbox"+str(boxes[len(boxes)-1].id))
     assert box != None

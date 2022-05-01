@@ -402,8 +402,18 @@ def camera_view(request, email, nome, ip):
 
             for box in bounding_boxes:
                 action_remover_bounding_box = request.POST.get('removerBoundingBox' + str(box.id))
+                action_editar_bounding_box = request.POST.get('editarBoundingBox' + str(box.id))
                 if action_remover_bounding_box == 'Remover Box':
                     box.delete()
+                    return redirect('camera_atual', email, nome, ip)
+
+                if action_editar_bounding_box == "Confirmar Edição":
+                    '''box.x1 = bounding_box_form['x1'].value()
+                    box.save()'''
+
+                    if bounding_box_form.is_valid():
+                        box.delete()
+                        bounding_box_form.save()
                     return redirect('camera_atual', email, nome, ip)
 
 

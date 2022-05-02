@@ -22,7 +22,6 @@ def step_impl(context):
         When I click on visualizar camera
         Then I go to the camera view
         """)
-    #sleep(120)
 
 @When("I fill the create bounding box fields")
 def step_impl(context):
@@ -80,6 +79,10 @@ def step_impl(context):
 @Given("I click on editar box")
 def step_impl(context):
     boxes = BoundingBox.objects.all()
+
+    btn_ver = context.browser.find_element_by_name("verbox" + str(boxes.last().id))
+    btn_ver.click()
+
     btn_editar = context.browser.find_element_by_id("editarBox"+str(boxes.last().id))
     btn_editar.click()
 

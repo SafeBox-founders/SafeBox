@@ -144,6 +144,61 @@
                                     <input type="submit" class="btn btn-primary" value="Remover Box" name="removerBoundingBox{{box.id}}"/>
                                 </form>
 
+                                <div>
+                                    <input type="submit" value="Editar Box" class="btn btn-primary" id="editarBox{{ box.id }}"/>
+                                </div>
+
+                                <div
+                                    class="col-sm-6 card text-blue bg-dark mb-3 special-card"
+                                    id="formEditarBox{{ box.id }}"
+                                    style="position: sticky; z-index: 1; min-width: 20vw; display: none"
+                                >
+                                    <div class="card-header">
+                                        Editar Box
+                                    </div>
+                                    <div class="card-body" style="">
+                                        <form method="post" id="formEditBox">
+                                            {% csrf_token %}
+                                            {{ form_bounding_box|crispy }}
+                                            <input type="submit" class="btn btn-primary" value="Confirmar Edição" name="editarBoundingBox{{ box.id }}"/>
+                                        </form>
+                                    </div>
+                                </div>
+
+                                <script type="text/javascript">
+                                    var target = document.getElementById("formEditarBox{{ box.id }}");
+                                    var btn = document.getElementById("editarBox{{ box.id }}");
+
+                                    btn.onclick = function () {
+                                        if (target.style.display == "none") {
+                                            target.style.display = "block";
+                                            btn.value = "Fechar Edição";
+                                        } else {
+                                            target.style.display  = "none";
+                                            btn.value = "Editar Box";
+                                        }
+                                    };
+
+                                    x1 = document.getElementById("id_x1");
+                                    x1.id = "id_x1_create";
+                                    x2 = document.getElementById("id_x2");
+                                    x2.id = "id_x2_create";
+                                    y1 = document.getElementById("id_y1");
+                                    y1.id = "id_y1_create";
+                                    y2 = document.getElementById("id_y2");
+                                    y2.id = "id_y2_create";
+                                    num_max_pessoas = document.getElementById("id_num_max_pessoas");
+                                    num_max_pessoas.id = "id_num_max_pessoas_create";
+                                    num_min_pessoas = document.getElementById("id_num_min_pessoas");
+                                    num_min_pessoas.id = "id_num_min_pessoas_create";
+                                    horario_inicial = document.getElementById("id_horario_inicial");
+                                    horario_inicial.id = "id_horario_inicial_create";
+                                    horario_final = document.getElementById("id_horario_final");
+                                    horario_final.id = "id_horario_final_create";
+                                    cor = document.getElementById("id_cor");
+                                    cor.id = "id_cor_create";
+
+                                </script>
 
                             </div>
                             <input type="button" class="btn btn-danger mt-4" value="Ver Box {{box.id}}" name="verbox{{box.id}}" id="verbox{{box.id}}"/>

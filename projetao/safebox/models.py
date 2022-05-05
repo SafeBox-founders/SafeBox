@@ -149,3 +149,9 @@ class BoundingBox(models.Model):
                 "start": str(self.horario_inicial), "end": str(self.horario_final), "min": str(self.num_min_pessoas),
                 "max": str(self.num_max_pessoas)}
         return dict
+
+class Alerta(models.Model):
+    bounding_box_id = models.ForeignKey(BoundingBox, to_field='id', on_delete=models.CASCADE)
+    data = models.DateField(null=False)
+    hora = models.TimeField(null=False)
+    tipo = models.TextField(null=False)

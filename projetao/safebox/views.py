@@ -1,5 +1,6 @@
 import json
 import os
+from datetime import datetime
 
 from django.core import serializers
 from os import name
@@ -7,13 +8,20 @@ from django.shortcuts import render, redirect, HttpResponse
 from django.core.exceptions import ValidationError
 from django.urls import reverse
 from django.contrib import messages
-from .models import Camera, Cliente, Assinatura, Plano, Ambiente, BoundingBox
+from .models import Camera, Cliente, Assinatura, Plano, Ambiente, BoundingBox, Alerta
 from .forms import AssinaturaForm, CameraForm, ClienteForm, ClienteLoginForm, AmbienteForm, BoundingBoxForm
 import cv2
 from django.http import StreamingHttpResponse
 
 width = 0
 height = 0
+
+
+def str_to_date(date_str):
+    return datetime.strptime(date_str, '%y/%m/%d').date()
+
+def str_to_time(time_str):
+    return datetime.strptime(time_str, '%H:%M:%S').time()
 
 def index(request):
     return HttpResponse("Safe Box")
@@ -451,6 +459,32 @@ def camera_view(request, email, nome, ip):
             with open(os.path.join(cwd, 'jsons', 'camera{}.json'.format(ip)), "w") as out_file:
                 json.dump(partitions, out_file, indent=2)
 
+        with open(os.path.join(cwd, 'jsons', 'alerts.json')) as alert_file:
+            alert_json = json.load(alert_file)
+
+        lista_alertas = []
+        for key in alert_json:
+            tmp = BoundingBox.objects.get(id=key)
+
+            date = alert_json[key]['date'].split('/')
+            date = str_to_date(date[2]+'/'+date[0]+'/'+date[1])
+
+            alerta = Alerta.objects.create(bounding_box_id=tmp,
+                                           data = date,
+                                           hora = alert_json[key]['time'],
+                                           tipo =  alert_json[key]['alert'])
+            alerta.bounding_box_id = tmp
+
+            # print(date)
+            # alerta.data = str_to_date(date)
+            #
+            # alerta.hora = str_to_time(alert_json[key]['time'])
+            # alerta.tipo = alert_json[key]['alert']
+            alerta.save()
+            lista_alertas.append(alerta)
+
+        context['alertas'] = lista_alertas
+
     return render(request, "camera_view.html", context)
 
 
@@ -483,8 +517,6 @@ def camera_edit_view(request, email, nome, ip):
             if cam.get_nome() == form['nome'].value():
                 flag_cam_existente = True
                 break
-
-
 
     try:
         if form.is_valid() and not flag_cam_existente:
@@ -549,11 +581,18 @@ class VideoCamera(object):
     def __del__(self):
         self.video.release()
 
-    def get_frame(self, ip):
+    def get_frame(self, ip, count):
         ret, frame = self.video.read()
-        frame_width = int(frame.shape[0]*0.7)
-        frame_height = int(frame.shape[1]*0.7)
-        frame = cv2.resize(frame,(frame_height,frame_width),interpolation=cv2.INTER_AREA)
+
+        frame_width = int(frame.shape[1]*0.7)
+        frame_height = int(frame.shape[0]*0.7)
+
+        frame = cv2.resize(frame,(frame_width, frame_height),interpolation=cv2.INTER_AREA)
+
+        if count % 360 == 0:
+            print('--- salvou ---')
+            cv2.imwrite('frame.png', frame)
+
         bounding_box = BoundingBox.objects.all().filter(camera_ip = ip)
         frame_box = frame
         for i in bounding_box:
@@ -563,8 +602,14 @@ class VideoCamera(object):
         return frame_box.tobytes()
 
 def gen(camera, ip):
+    count = 0
     while True:
-        frame = camera.get_frame(ip)
+        count += 1
+        frame = camera.get_frame(ip, count)
+
+        if count > 360:
+            count = 0
+
         yield (b'--frame\r\n'
                 b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n\r\n')
 

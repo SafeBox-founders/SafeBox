@@ -1,5 +1,7 @@
+from datetime import datetime
+
 from django.test import TestCase
-from .models import Camera, Cliente, Plano, Assinatura, Ambiente
+from .models import Camera, Cliente, Plano, Assinatura, Ambiente, Alerta, BoundingBox
 import unittest
 from django.urls import reverse
 
@@ -163,4 +165,39 @@ class CameraTest(TestCase):
         novo_nome = 'Cam_Teste'
         camera.set_nome(novo_nome)
         self.assertEqual(camera.get_nome(), novo_nome)
+
+class AlertaTest(TestCase):
+    def setUp(self):
+        ambiente = Ambiente()
+        cliente = Cliente.objects.create(nome="testador", email="teste@gmail.com", contato="00000000000",
+                                         cpf_cnpj="00000000000", senha="123456")
+        ambiente = Ambiente.objects.create(cliente_id=cliente, nome="Ambiente de teste", numero_cameras=0)
+
+        self.camera = Camera()
+        self.camera = Camera.objects.create(nome="camera teste", ip="10.0.0.0", ambiente_id=ambiente, usuario="admin",
+                                            senha="admin", porta="8080")
+        bounding_box = BoundingBox()
+        bounding_box.x1 = 20
+        bounding_box.y1 = 20
+        bounding_box.x2 = 200
+        bounding_box.y2 = 200
+        bounding_box.num_min_pessoas = 1
+        bounding_box.num_max_pessoas = 2
+        bounding_box.horario_inicial = datetime.strptime('06:00:00', '%H:%M:%S').time()
+        bounding_box.horario_final = datetime.strptime('23:00:00', '%H:%M:%S').time()
+        bounding_box.cor = 345673
+        bounding_box.camera_ip = self.camera
+        bounding_box.save()
+
+        self.alerta = Alerta()
+        self.alerta.bounding_box_id = BoundingBox.objects.last()
+        self.alerta.data = datetime.strptime('22/5/05', '%y/%m/%d').date()
+        self.alerta.hora = datetime.strptime('08:00:00', '%H:%M:%S').time()
+        self.alerta.tipo = 'min'
+        self.alerta.save()
+
+    def test_create_alert(self):
+        alerta = Alerta.objects.last()
+        self.assertEqual(self.alerta, alerta)
+
 

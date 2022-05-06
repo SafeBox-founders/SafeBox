@@ -447,8 +447,17 @@ def camera_view(request, email, nome, ip):
                     box.save()'''
 
                     if bounding_box_form.is_valid():
-                        box.delete()
-                        bounding_box_form.save()
+                        newBox = bounding_box_form.cleaned_data
+                        box.x1=newBox['x1']
+                        box.x2=newBox['x2']
+                        box.y1=newBox['y1']
+                        box.y2=newBox['y2']
+                        box.num_max_pessoas=newBox["num_max_pessoas"]
+                        box.num_min_pessoas=newBox["num_min_pessoas"]
+                        box.horario_inicial=newBox['horario_inicial']
+                        box.horario_final=newBox['horario_final']
+                        box.cor=newBox['cor']
+                        box.save()
                     return redirect('camera_atual', email, nome, ip)
 
             partitions = {}

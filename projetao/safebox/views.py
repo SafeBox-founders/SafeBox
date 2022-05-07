@@ -1,17 +1,20 @@
 import json
 import os
 from datetime import datetime
-
+import io
 from django.core import serializers
 from os import name
 from django.shortcuts import render, redirect, HttpResponse
 from django.core.exceptions import ValidationError
 from django.urls import reverse
 from django.contrib import messages
-from .models import Camera, Cliente, Assinatura, Plano, Ambiente, BoundingBox, Alerta
-from .forms import AssinaturaForm, CameraForm, ClienteForm, ClienteLoginForm, AmbienteForm, BoundingBoxForm
+from .models import Camera, Cliente, Assinatura, Plano, Ambiente, BoundingBox, Alerta, Relatorio
+from .forms import AssinaturaForm, CameraForm, ClienteForm, ClienteLoginForm, AmbienteForm, BoundingBoxForm, RelatorioForm
 import cv2
-from django.http import StreamingHttpResponse
+from django.http import StreamingHttpResponse, FileResponse
+from reportlab.pdfgen import canvas
+from reportlab.lib.units import inch
+from reportlab.lib.pagesizes import letter
 
 width = 0
 height = 0
@@ -490,7 +493,7 @@ def camera_view(request, email, nome, ip):
                                                tipo =  alert_json[key]['alert'])
                 alerta.bounding_box_id = tmp
                 alerta.save()
-                lista_alertas.append(alerta)
+                #lista_alertas.append(alerta)
 
         lista_alertas = []
 
@@ -648,3 +651,80 @@ def set_shape(imagem_width, imagem_height):
     width = imagem_width
     global height
     height = imagem_height
+
+def relatorio_view(request, email):
+    context = {}
+    context["data"] = Cliente.objects.get(email=email)
+    action_criar_relatorio = request.POST.get('gerarRelatorio')
+
+    if action_criar_relatorio == "Gerar Relatório":
+        return redirect("relatorio_create", email)
+
+    return render(request, "relatorio_view.html", context)
+
+def relatorio_create_view(request, email):
+    context = {}
+    context["data"] = Cliente.objects.get(email=email)
+    relatorioForm = RelatorioForm(request.POST or None, initial={"cliente_id": context['data'].id})
+    context["form"] = relatorioForm
+    action_criar_relatorio = request.POST.get('criarRelatorio')
+    if action_criar_relatorio == "Criar Relatório":
+        relatorioForm.save()
+        relatorio_criado = Relatorio.objects.all().filter(cliente_id=context['data'].id).last()
+        return redirect("relatorio_detail_view", email, relatorio_criado.id)
+    return render(request, "relatorio_create_view.html", context)
+
+def relatorio_detail_view(request, email, relatorio_id):
+    context = {}
+    context["data"] = Cliente.objects.get(email=email)
+    relatorio = Relatorio.objects.get(cliente_id=context["data"].id ,id=relatorio_id)
+
+    action_exportar_relatorio = request.POST.get('exportarRelatorio')
+    if action_exportar_relatorio == "Exportar Relatório":
+        return redirect('generate_pdf', email)
+
+    return render(request, "relatorio_detail_view.html", context)
+
+def generate_pdf(request, email):
+    buf = io.BytesIO()
+    c = canvas.Canvas(buf, pagesize=letter, bottomup=0)
+    textob = c.beginText()
+    textob.setTextOrigin(inch, inch)
+    textob.setFont("Helvetica-Bold", 25)
+    textob.textLine("Relatório Gatinho do "+email)
+    textob.setFont("Helvetica", 15)
+    ####################################
+    lines = ["====================================================="]
+
+    cliente = Cliente.objects.get(email=email)
+    ambientes = Ambiente.objects.all().filter(cliente_id=cliente.id)
+
+    for amb in ambientes:
+        lines.append("Nome do Ambiente: " + amb.get_nome())
+        lines.append("                                                Cameras                       ")
+        cameras = Camera.objects.all().filter(ambiente_id=amb.id)
+        for cam in cameras:
+            lines.append("Nome da Câmera: "+cam.nome)
+            box = BoundingBox.objects.all().filter(camera_ip=cam)
+            lines.append("Bounding Boxes: "+str(len(box)))
+            for b in box:
+                alertas = Alerta.objects.all().filter(bounding_box_id=b)
+                lines.append("Alertas: "+str(len(alertas)))
+                for alerta in alertas:
+                    lines.append("Alerta Info: "+str(alerta.data)+" "+str(alerta.hora)+" "+str(alerta.tipo))
+
+        lines.append("=====================================================")
+
+
+    for line in lines:
+        textob.textLine(line)
+
+    c.drawText(textob)
+    c.showPage()
+    c.save()
+    buf.seek(0)
+
+    return FileResponse(buf, as_attachment=True,filename="ratinho.pdf")
+
+
+

@@ -1,5 +1,4 @@
 {% load static %}
-{% load crispy_forms_tags %}
 
 <html>
     <head>
@@ -10,21 +9,25 @@
 
         <title>
             {% block title %}
-                Editar Câmera
+                Relatórios Visualizar
             {% endblock title %}
         </title>
+
     </head>
 
     <body class="text-center">
 
         <style>
             .fix-size {
-                width: 100%;
+                width: 40%;
             }
             body {
               color: #fff;
               height: 100%;
               background-color: #333;
+            }
+            .special-card {
+              opacity: .8;
             }
         </style>
 
@@ -47,37 +50,29 @@
           </div>
         </nav>
 
-        <div class="main">
-
-            </br></br></br></br>
-
-            <img src="https://i.ibb.co/9vMmGyZ/camera-edit.png" class="img-fluid" alt="Responsive image" width="40%" height="40%" align="center">
-
-            </br></br></br>
-
-            <div class="container">
-                <div class="row justify-content-center">
-                    <form method="POST" enctype="multipart/form-data">
-                        {% csrf_token %}
-                        {{ form|crispy }}
-                        <input type="submit" class="btn btn-primary fix-size" value="Confirmar Edição" name="confirmar editar"/>
-                    </form>
-                </div>
-                <div class="row justify-content-center">
-                    <form method="GET" enctype="multipart/form-data">
-                        <input type="submit" class="btn btn-danger fix-size" value="Cancelar" name="cancelar"/>
-                    </form>
-                </div>
-            </div>
+        <div class="container">
+                </br></br>
+                <img src="https://i.ibb.co/gy7H6Rj/logado.png" class="img-fluid" alt="Responsive image" width="70%" height="70%" align="center">
+                </br></br>
         </div>
 
-        {% if messages %}
-        <ul class="messages">
-            {% for message in messages %}
-            <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
-            {% endfor %}
-        </ul>
-        {% endif %}
+        </br></br>
+
+        <div class="row justify-content-center">
+            <div class="col-sm-6 card text-white bg-dark mb-3 special-card  " style="max-width: 23rem;">
+                <b>Cliente:</b> {{ data.email}}<br/>
+                <b>Data Inicial:</b> {{ relatorio.data_inicial}}<br/>
+                <b>Data Final:</b> {{ relatorio.data_final}}<br/>
+
+              <form method="POST" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <input type="submit" class="btn btn-primary" value="Exportar Relatório" name="exportarRelatorio"/>
+              </form>
+
+            </div>
+
+            <div class="col-sm-6" style="max-width: 1rem;"></div>
+        </div>
 
         <img src='https://i.ibb.co/pXn5JPj/background.png' style='position:fixed;top:0px;left:0px;width:100%;height:100%;z-index:-1;'>
 

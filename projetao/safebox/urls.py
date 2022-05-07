@@ -21,5 +21,10 @@ urlpatterns=[
     path("ambientes/<email>/<nome>/cameras/cadastrar", views.camera_create_view, name="criar_camera"),
     path("ambientes/<email>/<nome>/cameras/<ip>", views.camera_view, name="camera_atual"),
     path("ambientes/<email>/<nome>/cameras/<ip>/edit", views.camera_edit_view, name='camera_edit'),
-    path("video_stream/<usuario>/<senha>/<ip>/<porta>", views.video_stream, name='video_stream')
+    path("video_stream/<usuario>/<senha>/<ip>/<porta>", views.video_stream, name='video_stream'),
+    path("relatorio/<email>/",views.relatorio_view,name="relatorio_view"),
+    path("relatorio/<email>/create",views.relatorio_create_view,name="relatorio_create"),
+    path("relatorio/<email>/visualizar/<relatorio_id>/",views.relatorio_detail_view,name="relatorio_detail_view"),
+    path("generate_pdf/<email>", views.generate_pdf, name="generate_pdf")
+
 ]

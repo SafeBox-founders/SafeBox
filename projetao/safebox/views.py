@@ -471,31 +471,48 @@ def camera_view(request, email, nome, ip):
         with open(os.path.join(cwd, 'jsons', 'alerts.json')) as alert_file:
             alert_json = json.load(alert_file)
 
-        lista_alertas = []
+
         for key in alert_json:
             tmp = BoundingBox.objects.get(id=key)
 
             date = alert_json[key]['date'].split('/')
             date = str_to_date(date[2]+'/'+date[0]+'/'+date[1])
 
-            alerta = Alerta.objects.create(bounding_box_id=tmp,
+            tmp_2 = Alerta.objects.all().filter(bounding_box_id=tmp,
                                            data = date,
                                            hora = alert_json[key]['time'],
                                            tipo =  alert_json[key]['alert'])
-            alerta.bounding_box_id = tmp
 
-            # print(date)
-            # alerta.data = str_to_date(date)
-            #
-            # alerta.hora = str_to_time(alert_json[key]['time'])
-            # alerta.tipo = alert_json[key]['alert']
-            alerta.save()
-            lista_alertas.append(alerta)
+            if len(tmp_2) == 0:
+                alerta = Alerta.objects.create(bounding_box_id=tmp,
+                                               data = date,
+                                               hora = alert_json[key]['time'],
+                                               tipo =  alert_json[key]['alert'])
+                alerta.bounding_box_id = tmp
+                alerta.save()
+                lista_alertas.append(alerta)
+
+        lista_alertas = []
+
+        for box in bounding_boxes:
+            alertas = Alerta.objects.all().filter(bounding_box_id=box)
+            for alerta in alertas:
+                lista_alertas.append(alerta)
 
         context['alertas'] = lista_alertas
 
     return render(request, "camera_view.html", context)
 
+
+def load_json(request):
+
+    print('passou')
+    with open(os.path.join(cwd, 'jsons', 'alerts.json')) as alert_file:
+        alert_json = json.load(alert_file)
+
+    print('passou')
+
+    return StreamingHttpResponse({'alert': alert_json},  'camera_view.html', content_type='application/html')
 
 def camera_edit_view(request, email, nome, ip):
     action_cancelar = request.GET.get('cancelar')

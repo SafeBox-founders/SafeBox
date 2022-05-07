@@ -13,9 +13,13 @@
                 {{ camera.ip }}
             {% endblock title %}
         </title>
+
     </head>
 
+
     <body class="text-center">
+
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
 
         <style>
             .fix-size {
@@ -26,6 +30,9 @@
               height: 100%;
               background-color: #333;
             }
+            textarea {
+              color: #000;
+                }
         </style>
 
         <!--- nav bar --->
@@ -226,13 +233,25 @@
         </div>
         </br></br></br>
 
-        <textarea id="saida", name="alertas" rows="10" cols="80">
+        <div id="teste">
+              <textarea id="saida", name="alertas" rows="10" cols="80">
             {% block alertabloco %}
                 {% for alerta in alertas %}
-                    Tipo: {{ alerta.tipo}}, Data: {{ alerta.data }}, Hora: {{ alerta.hora }}
+                    Box: {{ alerta.bounding_box_id.id }} Tipo: {{ alerta.tipo}}, Data: {{ alerta.data }}, Hora: {{ alerta.hora }}
                 {% endfor %}
             {% endblock %}
         </textarea>
+
+        </div>
+
+        <script>
+            window.setInterval("refreshDiv()", 1000);
+
+            function refreshDiv(){
+                $('#teste').load(location.href + " #teste");
+            }
+        </script>
+
 
         </br></br></br>
 

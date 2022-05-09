@@ -233,15 +233,16 @@
         </div>
         </br></br></br>
 
-        <div id="teste">
-              <textarea id="saida", name="alertas" rows="10" cols="80">
-            {% block alertabloco %}
-                {% for alerta in alertas %}
-                    Box: {{ alerta.bounding_box_id.id }} Tipo: {{ alerta.tipo}}, Data: {{ alerta.data }}, Hora: {{ alerta.hora }}
-                {% endfor %}
-            {% endblock %}
-        </textarea>
-
+        <div class='container'>
+            <div id="teste"  style="background-color:white;" class="col-sm" >
+                </br>
+                {% block alertabloco %}
+                    {% for alerta in alertas %}
+                        <span style="color:#{{ alerta.bounding_box_id.cor }}; font-weight:bold"> Box: {{ alerta.bounding_box_id.id }} Tipo: {{ alerta.tipo}}, Data: {{ alerta.data }}, Hora: {{ alerta.hora }} </br></span>
+                    {% endfor %}
+                {% endblock %}
+                </br>
+            </div>
         </div>
 
         <script>

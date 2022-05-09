@@ -501,8 +501,9 @@ def camera_view(request, email, nome, ip):
             alertas = Alerta.objects.all().filter(bounding_box_id=box)
             for alerta in alertas:
                 lista_alertas.append(alerta)
+                context[str(alerta.id)] = box.cor
 
-        context['alertas'] = lista_alertas
+        context['alertas'] = lista_alertas[len(lista_alertas)-10:]
 
     return render(request, "camera_view.html", context)
 
@@ -709,6 +710,10 @@ def generate_pdf(request, email,id):
     relatorio = Relatorio.objects.get(id=id)
     buf = io.BytesIO()
     c = canvas.Canvas(buf, pagesize=letter, bottomup=0)
+
+    c.drawImage('/home/arnaldo/SafeBox/projetao/safebox/logo.png', 50, 50, 500,
+                     preserveAspectRatio=True, mask='auto')  # MAKE SURE IMAGE IS DYNAMIC AND HAS MAX SETS
+
     textob = c.beginText()
     textob.setTextOrigin(inch, inch)
     textob.setFont("Helvetica-Bold", 32)

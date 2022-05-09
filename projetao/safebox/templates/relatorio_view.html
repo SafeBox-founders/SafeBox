@@ -1,5 +1,4 @@
 {% load static %}
-{% load crispy_forms_tags %}
 
 <html>
     <head>
@@ -10,9 +9,10 @@
 
         <title>
             {% block title %}
-                Trocar plano
+                Relatórios
             {% endblock title %}
         </title>
+
     </head>
 
     <body class="text-center">
@@ -50,64 +50,30 @@
           </div>
         </nav>
 
-        <div class="main">
-            </br></br></br></br>
+        <div class="container">
+                </br></br>
+                <img src="https://i.ibb.co/gy7H6Rj/logado.png" class="img-fluid" alt="Responsive image" width="70%" height="70%" align="center">
+                </br></br>
+        </div>
 
-            <div class="container">
-                <div class ="row justify-content-center">
-                    <img src="https://i.ibb.co/hm6HYbD/assinatura.png" class="img-fluid" alt="Responsive image" width="30%" height="30%" align="center">
-                </div>
-            </div>
+        </br></br>
 
-            </br></br>
-
-            <div class="container">
-                <div class ="row justify-content-center">
-            {% for plano in planos %}
-                <div class="card col-sm-6 text-white border-light bg-dark mb-3  special-card " style="max-width: 11rem;">
-                    <div class="card-header">
-                        <img src="https://i.ibb.co/vzL55qk/pro.png" class="img-fluid" alt="Responsive image" width="20%" height="20%" align="center">
-                        <b>{{ plano.nome }}</b>
-                    </div>
-                    <p class="card-text">
-                        <b>Valor: </b>{{ plano.valor }}
-                    </p>
-                    <p class="card-text">
-                        <b>Qntd. de câmeras: </b>{{ plano.numero_cameras }}</br>
-                    </p>
-                    <p class="card-text">
-                        <b>Qntd. de boxes: </b>{{ plano.numero_boundingbox }}</br>
-                    </p>
-                    <p class="card-text">
-                        <b>Relatório mensal: </b>{{ plano.relatorio }}
-                    </p>
-                </div>
-
-                <div class="col-sm-6" style="max-width: 1rem;"></div>
-
-            {% endfor %}
-
-                </div>
-            </div>
-
-            </br>
-
-            <div class="container">
-                <div class="row justify-content-center">
+        <div class="row justify-content-center">
+            <div class="col-sm-6 card text-white bg-dark mb-3 special-card  " style="max-width: 23rem;">
+              <form method="POST" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <input type="submit" class="btn btn-primary" value="Gerar Relatório" name="gerarRelatorio"/>
+                </form>
                 <form method="POST" enctype="multipart/form-data">
                     {% csrf_token %}
-                    {{ form|crispy}}
-                    <input type="submit" class="btn btn-primary" value="Mudar de Plano" name="trocar"/>
+                    <input type="submit" class="btn btn-primary" value="Histórico" name="visualizarHistorico"/>
                 </form>
-                </div>
             </div>
 
+            <div class="col-sm-6" style="max-width: 1rem;"></div>
         </div>
 
         <img src='https://i.ibb.co/pXn5JPj/background.png' style='position:fixed;top:0px;left:0px;width:100%;height:100%;z-index:-1;'>
 
     </body>
 </html>
-
-
-

@@ -10,7 +10,7 @@
 
         <title>
             {% block title %}
-                Trocar plano
+                Criar Relatorio
             {% endblock title %}
         </title>
     </head>
@@ -19,15 +19,12 @@
 
         <style>
             .fix-size {
-                width: 40%;
+                width: 100%;
             }
             body {
               color: #fff;
               height: 100%;
               background-color: #333;
-            }
-            .special-card {
-              opacity: .8;
             }
         </style>
 
@@ -51,63 +48,33 @@
         </nav>
 
         <div class="main">
+
             </br></br></br></br>
 
-            <div class="container">
-                <div class ="row justify-content-center">
-                    <img src="https://i.ibb.co/hm6HYbD/assinatura.png" class="img-fluid" alt="Responsive image" width="30%" height="30%" align="center">
-                </div>
-            </div>
+            <img src="https://i.ibb.co/bHd1QbL/criar-ambiente.png" class="img-fluid" alt="Responsive image" width="40%" height="40%" align="center">
 
-            </br></br>
-
-            <div class="container">
-                <div class ="row justify-content-center">
-            {% for plano in planos %}
-                <div class="card col-sm-6 text-white border-light bg-dark mb-3  special-card " style="max-width: 11rem;">
-                    <div class="card-header">
-                        <img src="https://i.ibb.co/vzL55qk/pro.png" class="img-fluid" alt="Responsive image" width="20%" height="20%" align="center">
-                        <b>{{ plano.nome }}</b>
-                    </div>
-                    <p class="card-text">
-                        <b>Valor: </b>{{ plano.valor }}
-                    </p>
-                    <p class="card-text">
-                        <b>Qntd. de câmeras: </b>{{ plano.numero_cameras }}</br>
-                    </p>
-                    <p class="card-text">
-                        <b>Qntd. de boxes: </b>{{ plano.numero_boundingbox }}</br>
-                    </p>
-                    <p class="card-text">
-                        <b>Relatório mensal: </b>{{ plano.relatorio }}
-                    </p>
-                </div>
-
-                <div class="col-sm-6" style="max-width: 1rem;"></div>
-
-            {% endfor %}
-
-                </div>
-            </div>
-
-            </br>
+            </br></br></br>
 
             <div class="container">
                 <div class="row justify-content-center">
-                <form method="POST" enctype="multipart/form-data">
-                    {% csrf_token %}
-                    {{ form|crispy}}
-                    <input type="submit" class="btn btn-primary" value="Mudar de Plano" name="trocar"/>
-                </form>
+                    <form method="POST" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        {{ form|crispy }}
+                        <input type="submit" class="btn btn-primary fix-size" value="Criar Relatório" name="criarRelatorio"/>
+                    </form>
                 </div>
             </div>
-
         </div>
+
+        {% if messages %}
+        <ul class="messages">
+            {% for message in messages %}
+            <li>{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+            {% endfor %}
+        </ul>
+        {% endif %}
 
         <img src='https://i.ibb.co/pXn5JPj/background.png' style='position:fixed;top:0px;left:0px;width:100%;height:100%;z-index:-1;'>
 
     </body>
 </html>
-
-
-

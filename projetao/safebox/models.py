@@ -155,3 +155,11 @@ class Alerta(models.Model):
     data = models.DateField(null=False)
     hora = models.TimeField(null=False)
     tipo = models.TextField(null=False)
+
+class Relatorio(models.Model):
+    cliente_id = models.ForeignKey(Cliente, to_field="id", on_delete=models.CASCADE)
+    data_inicial = models.DateField(auto_now_add=False, auto_now=False, blank=True, null=True)
+    data_final = models.DateField(auto_now_add=False, auto_now=False, blank=True, null=True)
+
+
+

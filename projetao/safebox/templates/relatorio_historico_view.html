@@ -1,0 +1,88 @@
+{% load static %}
+
+<html xmlns="http://www.w3.org/1999/html">
+    <head>
+        <!---bootstrap--->
+        <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+        <link rel="stylesheet" href="{% static 'fa/css/all.min.css' %}">
+        <script src="{% static 'js/bootstrap.min.js' %}"></script>
+
+        <title>
+            {% block title %}
+                Histórico de relatórios
+            {% endblock title %}
+        </title>
+    </head>
+
+    <body class="text-center">
+
+        <style>
+            .fix-size {
+                width: 40%;
+            }
+            body {
+              color: #fff;
+              height: 100%;
+              background-color: #333;
+            }
+        </style>
+
+        <!--- nav bar --->
+
+        <nav class="navbar navbar-expand-lg navbar-dark" style="background-color: #386bc9">
+
+          <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+
+          <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+            <div class="navbar-nav">
+              <a class="nav-item nav-link" href="/home/{{data.email}}" name="tela_inicial">Home</a>
+              <a class="nav-item nav-link" href="/visualizar/{{data.email}}" name="visualizar_perfil">Perfil</a>
+              <a class="nav-item nav-link" href="/ambientes/{{data.email}}" name="gerenciar_câmeras">Gerenciar câmeras</a>
+              <a class="nav-item nav-link" href="/relatorio/{{data.email}}" name="relatorios">Relatórios</a>
+              <a class="nav-item nav-link" href="/" name="sair">Sair</a>
+            </div>
+          </div>
+        </nav>
+
+        </br></br>
+
+        <div class="container">
+            <div class ="row justify-content-center">
+                <img src="https://i.ibb.co/vXY3mr0/ambientes.png" class="img-fluid" alt="Responsive image" width="40%" height="40%" align="center">
+            </div>
+        </div>
+
+        </br></br></br>
+
+        <div class="container">
+            <div class ="row justify-content-center">
+                {% block content %}
+                    {% for report in relatorios %}
+                        <div class="card col-sm-6 text-white border-light bg-dark mb-3  special-card " style="max-width: 11rem;">
+                            <div class="card-header">
+                                {{ report.id }}
+                                {{ report.data_inicial }}
+                                {{ report.data_final }}
+                            </div>
+                            <p class="card-text">
+                                <form method="post" >
+                                {% csrf_token %}
+                                <input type="submit" class="btn btn-primary"  value="Visualizar" name="visualizar{{report.id}}"/>
+                                </form>
+                            </p>
+                        </div>
+
+                        <div class="col-sm-6" style="max-width: 1rem;"></div>
+
+                    {% endfor %}
+                {% endblock %}
+            </div>
+        </div>
+
+        </br></br></br>
+
+        <img src='https://i.ibb.co/pXn5JPj/background.png' style='position:fixed;top:0px;left:0px;width:100%;height:100%;z-index:-1;'>
+    </body>
+</html>

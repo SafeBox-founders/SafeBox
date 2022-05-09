@@ -660,6 +660,11 @@ def relatorio_view(request, email):
     if action_criar_relatorio == "Gerar Relatório":
         return redirect("relatorio_create", email)
 
+    action_historico = request.POST.get('visualizarHistorico')
+    if action_historico == "Histórico":
+        return redirect("relatorio_historico", email)
+
+
     return render(request, "relatorio_view.html", context)
 
 def relatorio_create_view(request, email):
@@ -685,40 +690,60 @@ def relatorio_detail_view(request, email, relatorio_id):
 
     return render(request, "relatorio_detail_view.html", context)
 
+
+def relatorio_historico_view(request, email):
+    context = {}
+    context['data'] = Cliente.objects.get(email=email)
+    context['relatorios'] = Relatorio.objects.all().filter(cliente_id=context['data'].id)
+
+    for report in context['relatorios']:
+        action_view = request.POST.get('visualizar' + str(report.id))
+        if action_view == 'Visualizar':
+            return redirect('relatorio_detail_view', email, report.id)
+
+
+    return render(request, "relatorio_historico_view.html", context)
+
+
 def generate_pdf(request, email,id):
     relatorio = Relatorio.objects.get(id=id)
     buf = io.BytesIO()
     c = canvas.Canvas(buf, pagesize=letter, bottomup=0)
     textob = c.beginText()
     textob.setTextOrigin(inch, inch)
-    textob.setFont("Helvetica-Bold", 25)
+    textob.setFont("Helvetica-Bold", 32)
     textob.textLine("Relatório de "+email)
-    textob.setFont("Helvetica", 15)
+    textob.setFont("Helvetica", 16)
     ####################################
-    lines = ["====================================================="]
+    textob.textLine("=====================================================")
 
     cliente = Cliente.objects.get(email=email)
     ambientes = Ambiente.objects.all().filter(cliente_id=cliente.id)
 
     for amb in ambientes:
-        lines.append("Nome do Ambiente: " + amb.get_nome())
-        lines.append("                                                Cameras                       ")
+        textob.setFont("Helvetica-Bold", 24)
+        textob.textLine("Nome do Ambiente: " + amb.get_nome())
+        textob.setFont("Helvetica-Bold", 16)
+        textob.textLine("                                                Cameras                       ")
+        textob.setFont("Helvetica", 16)
         cameras = Camera.objects.all().filter(ambiente_id=amb.id)
         for cam in cameras:
-            lines.append("Nome da Câmera: "+cam.nome)
+            textob.textLine("Nome da Câmera: "+cam.nome)
             box = BoundingBox.objects.all().filter(camera_ip=cam)
-            lines.append("Bounding Boxes: "+str(len(box)))
+            textob.textLine("Bounding Boxes: "+str(len(box)))
             for b in box:
-                alertas = Alerta.objects.all().filter(bounding_box_id=b,datagte=relatorio.data_inicial,datalte=relatorio.data_final)
-                lines.append("Alertas: "+str(len(alertas)))
+                textob.setFillColorRGB(255,0,0)
+                alertas = Alerta.objects.all().filter(bounding_box_id=b, data__gte=relatorio.data_inicial,data__lte=relatorio.data_final)
+                textob.textLine("Alertas: "+str(len(alertas)))
                 for alerta in alertas:
-                    lines.append("Alerta Info: "+str(alerta.data)+" "+str(alerta.hora)+" "+str(alerta.tipo))
+                    textob.textLine("Alerta Info: "+str(alerta.data)+" "+str(alerta.hora)+" "+str(alerta.tipo))
 
-        lines.append("=====================================================")
+                textob.setFillColorRGB(0, 0, 0)
 
 
-    for line in lines:
-        textob.textLine(line)
+
+        textob.textLine("=====================================================")
+
 
     c.drawText(textob)
     c.showPage()

@@ -678,20 +678,21 @@ def relatorio_detail_view(request, email, relatorio_id):
     context = {}
     context["data"] = Cliente.objects.get(email=email)
     relatorio = Relatorio.objects.get(cliente_id=context["data"].id ,id=relatorio_id)
-
+    context["relatorio"] = relatorio
     action_exportar_relatorio = request.POST.get('exportarRelatorio')
     if action_exportar_relatorio == "Exportar Relatório":
-        return redirect('generate_pdf', email)
+        return redirect('generate_pdf', email, relatorio.id)
 
     return render(request, "relatorio_detail_view.html", context)
 
-def generate_pdf(request, email):
+def generate_pdf(request, email,id):
+    relatorio = Relatorio.objects.get(id=id)
     buf = io.BytesIO()
     c = canvas.Canvas(buf, pagesize=letter, bottomup=0)
     textob = c.beginText()
     textob.setTextOrigin(inch, inch)
     textob.setFont("Helvetica-Bold", 25)
-    textob.textLine("Relatório Gatinho do "+email)
+    textob.textLine("Relatório de "+email)
     textob.setFont("Helvetica", 15)
     ####################################
     lines = ["====================================================="]
@@ -708,7 +709,7 @@ def generate_pdf(request, email):
             box = BoundingBox.objects.all().filter(camera_ip=cam)
             lines.append("Bounding Boxes: "+str(len(box)))
             for b in box:
-                alertas = Alerta.objects.all().filter(bounding_box_id=b)
+                alertas = Alerta.objects.all().filter(bounding_box_id=b,datagte=relatorio.data_inicial,datalte=relatorio.data_final)
                 lines.append("Alertas: "+str(len(alertas)))
                 for alerta in alertas:
                     lines.append("Alerta Info: "+str(alerta.data)+" "+str(alerta.hora)+" "+str(alerta.tipo))
@@ -724,7 +725,7 @@ def generate_pdf(request, email):
     c.save()
     buf.seek(0)
 
-    return FileResponse(buf, as_attachment=True,filename="ratinho.pdf")
+    return FileResponse(buf, as_attachment=True,filename="relatorio"+str(relatorio.data_inicial)+"----"+str(relatorio.data_final)+".pdf")
 
 
 

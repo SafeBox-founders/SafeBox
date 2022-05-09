@@ -25,6 +25,6 @@ urlpatterns=[
     path("relatorio/<email>/",views.relatorio_view,name="relatorio_view"),
     path("relatorio/<email>/create",views.relatorio_create_view,name="relatorio_create"),
     path("relatorio/<email>/visualizar/<relatorio_id>/",views.relatorio_detail_view,name="relatorio_detail_view"),
-    path("generate_pdf/<email>", views.generate_pdf, name="generate_pdf")
+    path("generate_pdf/<email>/<id>", views.generate_pdf, name="generate_pdf")
 
 ]

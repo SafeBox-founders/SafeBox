@@ -9,7 +9,8 @@ from django.core.exceptions import ValidationError
 from django.urls import reverse
 from django.contrib import messages
 from .models import Camera, Cliente, Assinatura, Plano, Ambiente, BoundingBox, Alerta, Relatorio
-from .forms import AssinaturaForm, CameraForm, ClienteForm, ClienteLoginForm, AmbienteForm, BoundingBoxForm, RelatorioForm
+from .forms import AssinaturaForm, CameraForm, ClienteForm, ClienteLoginForm, AmbienteForm, BoundingBoxForm, \
+    RelatorioForm
 import cv2
 from django.http import StreamingHttpResponse, FileResponse
 from reportlab.pdfgen import canvas
@@ -23,11 +24,14 @@ height = 0
 def str_to_date(date_str):
     return datetime.strptime(date_str, '%y/%m/%d').date()
 
+
 def str_to_time(time_str):
     return datetime.strptime(time_str, '%H:%M:%S').time()
 
+
 def index(request):
     return HttpResponse("Safe Box")
+
 
 def home_view(request, email):
     context = {}
@@ -41,6 +45,7 @@ def home_view(request, email):
             return redirect('visualizar', email)
     return render(request, "home_view.html", context)
 
+
 def cliente_create_view(request):
     context = {}
     form = ClienteForm(request.POST or None)
@@ -50,6 +55,7 @@ def cliente_create_view(request):
         return redirect('login')
     context["form"] = form
     return render(request, "cliente_create_view.html", context)
+
 
 def cliente_detail_view(request, email):
     context = {}
@@ -67,15 +73,16 @@ def cliente_detail_view(request, email):
         if action_editar == 'Editar Conta':
             context['data'].reactivate()
             context['data'].save()
-            return redirect('editar',context['data'].get_email())
+            return redirect('editar', context['data'].get_email())
 
         if action_visualizar == 'Visualizar Assinatura':
-            return redirect('visualizar_assinatura',context['data'].get_email())
+            return redirect('visualizar_assinatura', context['data'].get_email())
 
         if action_assinar == "Assinar plano":
-            return redirect('assinar_plano',context['data'].get_email())
+            return redirect('assinar_plano', context['data'].get_email())
 
     return render(request, "cliente_detail_view.html", context)
+
 
 def cliente_assinatura_view(request, email):
     context = {}
@@ -91,17 +98,18 @@ def cliente_assinatura_view(request, email):
     action_remover = request.POST.get('remover_plano')
 
     if action_voltar == 'Voltar':
-        return redirect('visualizar',email)
+        return redirect('visualizar', email)
 
     if action_trocar == 'Trocar Plano':
         return redirect('trocar_assinatura', email)
 
     if action_remover == 'Remover Plano':
-        #messages.info(request, "Assinatura desfeita com sucesso!")
+        # messages.info(request, "Assinatura desfeita com sucesso!")
         remover_assinatura(request, email)
         return redirect('visualizar', email)
 
     return render(request, "cliente_assinatura_view.html", context)
+
 
 def remover_assinatura(request, email):
     cliente = Cliente.objects.get(email=email)
@@ -115,6 +123,7 @@ def remover_assinatura(request, email):
     if flag_assinatura_existente:
         assinatura[0].delete()
 
+
 def cliente_edit_view(request, email):
     context = {}
     context["data"] = Cliente.objects.get(email=email)
@@ -127,12 +136,13 @@ def cliente_edit_view(request, email):
     if form.is_valid():
         form.save()
         email = request.POST['email']
-        return redirect('visualizar',email)
+        return redirect('visualizar', email)
 
     # add form dictionary to context
     context["form"] = form
 
     return render(request, "cliente_edit_view.html", context)
+
 
 ################## Cliente Login e session ##################################
 def cliente_login_view(request):
@@ -152,7 +162,7 @@ def cliente_login_view(request):
                 if usuario is not None:
                     request.session['id'] = usuario.id
                     cliente_id = request.session['id']
-                    session_state = {'email': usuario.get_email(), 'id':cliente_id}
+                    session_state = {'email': usuario.get_email(), 'id': cliente_id}
                     return redirect('home', email)
                 else:
                     context['message'] = "Senha incorreta!"
@@ -167,11 +177,13 @@ def cliente_login_view(request):
     context["form"] = form
     return render(request, "cliente_login_view.html", context)
 
+
 def autenticar(usuario, senha):
     if usuario.get_senha() == senha:
         return usuario
     else:
         return None
+
 
 def sair(request):
     try:
@@ -180,6 +192,8 @@ def sair(request):
         pass
 
     return redirect('login')
+
+
 ###################################################################
 
 def payments(request, email, id):
@@ -196,10 +210,10 @@ def payments(request, email, id):
     if variavel == 'Voltar':
         return redirect('visualizar', email)
 
-
     context['data'] = Cliente.objects.get(email=email)
 
     return render(request, 'payments.html', context)
+
 
 def assinatura_create_view(request, email):
     context = {}
@@ -212,7 +226,7 @@ def assinatura_create_view(request, email):
     if (assinatura != None) and (len(assinatura) != 0):
         flag_assinatura_existente = True
 
-    form = AssinaturaForm(request.POST or None, initial={"cliente_id":context['data'].id})
+    form = AssinaturaForm(request.POST or None, initial={"cliente_id": context['data'].id})
     if form.is_valid() and not flag_assinatura_existente:
         plano_id_temp = form['plano_id'].value()
         plano = Plano.objects.all()
@@ -220,7 +234,7 @@ def assinatura_create_view(request, email):
 
         if plano != None and len(plano) > 0:
             context['valor_plano'] = plano[0].valor
-            #tmp['valor_plano'] = plano[0].valor
+            # tmp['valor_plano'] = plano[0].valor
             tmp['email'] = email
             form.save()
             assinatura = Assinatura.objects.all()
@@ -259,18 +273,18 @@ def assinatura_trocar_view(request, email):
     return render(request, "assinatura_trocar_plano.html", context)
 
 
-def ambiente_list_view(request,email):
+def ambiente_list_view(request, email):
     context = {}
     context['data'] = Cliente.objects.get(email=email)
     ambientes = Ambiente.objects.all()
     ambiente = ambientes.filter(cliente_id=context['data'].id)
-    context['ambientes'] =[]
+    context['ambientes'] = []
     if ambiente != None and len(ambiente) != 0:
-        context['ambientes']=ambiente
+        context['ambientes'] = ambiente
 
-    action_criar =  request.POST.get('criar')
+    action_criar = request.POST.get('criar')
     if action_criar == 'Criar ambiente':
-        return redirect('criar_ambiente',email)
+        return redirect('criar_ambiente', email)
 
     for amb in ambiente:
         action_criar = request.POST.get('visualizar' + str(amb.get_nome()))
@@ -286,12 +300,13 @@ def ambiente_list_view(request,email):
 
     return render(request, "ambiente_list_view.html", context)
 
-def ambiente_create_view(request,email):
+
+def ambiente_create_view(request, email):
     context = {}
     context['data'] = Cliente.objects.get(email=email)
     ambientes = Ambiente.objects.all()
     ambiente = ambientes.filter(cliente_id=context['data'].id)
-    form = AmbienteForm(request.POST or None, initial={"cliente_id":context['data'].id})
+    form = AmbienteForm(request.POST or None, initial={"cliente_id": context['data'].id})
     flag_amb_existente = False
     if (ambiente != None) and (ambiente != []):
         for amb in ambiente:
@@ -302,8 +317,8 @@ def ambiente_create_view(request,email):
 
         if form.is_valid() and not flag_amb_existente:
             form.save()
-            return redirect('ambientes',email)
-        elif(form.is_valid() and flag_amb_existente):
+            return redirect('ambientes', email)
+        elif (form.is_valid() and flag_amb_existente):
             raise ValidationError('errou')
 
     except ValidationError:
@@ -312,20 +327,21 @@ def ambiente_create_view(request,email):
     context['form'] = form
     return render(request, "ambiente_create_view.html", context)
 
+
 def ambiente_view(request, email, nome):
     context = {}
     context['data'] = Cliente.objects.get(email=email)
     ambientes = Ambiente.objects.all()
     ambiente = ambientes.filter(cliente_id=context['data'].id, nome=nome)
     cameras = Camera.objects.all()
-    camera = cameras.filter(ambiente_id = ambiente[0].id)
+    camera = cameras.filter(ambiente_id=ambiente[0].id)
     context['cameras'] = []
     if camera != None and len(camera) != 0:
         context['cameras'] = camera
 
-    action_criar =  request.POST.get('addcam')
+    action_criar = request.POST.get('addcam')
     if action_criar == 'Adicionar nova câmera':
-        return redirect('criar_camera',email, nome)
+        return redirect('criar_camera', email, nome)
 
     for cam in camera:
         action_criar = request.POST.get('visualizar' + str(cam.get_ip()))
@@ -336,7 +352,6 @@ def ambiente_view(request, email, nome):
             remover_camera(email, nome, cam.get_ip())
             messages.success(request, "Câmera", cam.get_ip(), " removida com sucesso.")
             return redirect('ambiente_atual', email, nome)
-
 
         action_edit = request.POST.get('editar' + str(cam.get_ip()))
         if action_edit == 'Editar':
@@ -354,6 +369,7 @@ def ambiente_view(request, email, nome):
 
     return render(request, "ambiente_view.html", context)
 
+
 def ambiente_edit_view(request, email, nome):
     action_cancelar = request.GET.get('cancelar')
     if action_cancelar == "Cancelar":
@@ -364,7 +380,8 @@ def ambiente_edit_view(request, email, nome):
     ambientes = Ambiente.objects.all()
     ambiente = ambientes.filter(cliente_id=context['data'].id, nome=nome)
 
-    form = AmbienteForm(request.POST or None, initial={"cliente_id": context['data'].id, "numero_cameras": ambiente[0].get_numero_cameras()})
+    form = AmbienteForm(request.POST or None,
+                        initial={"cliente_id": context['data'].id, "numero_cameras": ambiente[0].get_numero_cameras()})
 
     flag_amb_existente = False
     if (ambiente != None) and (ambiente != []):
@@ -388,13 +405,14 @@ def ambiente_edit_view(request, email, nome):
     context['nome_in_edit'] = nome
     return render(request, "ambiente_edit_view.html", context)
 
+
 def camera_view(request, email, nome, ip):
     context = {}
     context['data'] = Cliente.objects.get(email=email)
     ambientes = Ambiente.objects.all()
     ambiente = ambientes.get(cliente_id=context['data'].id, nome=nome)
     cameras = Camera.objects.all()
-    camera = cameras.filter(ambiente_id = ambiente.id, ip = ip)
+    camera = cameras.filter(ambiente_id=ambiente.id, ip=ip)
     context['ambiente_name'] = nome
     context['camera'] = camera[0]
     bounding_box_form = BoundingBoxForm(request.POST or None, initial={"camera_ip": ip})
@@ -410,12 +428,14 @@ def camera_view(request, email, nome, ip):
             if action_remover == "Remover":
                 remover_camera(email, nome, cam.get_ip())
                 messages.success(request, "Câmera", cam.get_ip(), " removida com sucesso.")
-                return redirect('ambiente_atual',email, nome)
+                return redirect('ambiente_atual', email, nome)
 
             global width
             global height
-            #width = 810
-            #height = 540
+            # width = 810
+            # height = 540
+            context["width"] = width
+            context["height"] = height
             if action_criar_bounding_box == "Criar Bounding Box":
                 if (bounding_box_form.is_valid()):
                     if (0 > int(bounding_box_form['x1'].value()) or int(bounding_box_form['x1'].value()) > width):
@@ -435,8 +455,20 @@ def camera_view(request, email, nome, ip):
                                       "Valor de Y2 negativo ou superior ao tamanho da imagem, valor máximo:" + str(
                                           height))
                     else:
+                        newBox = bounding_box_form.cleaned_data
                         bounding_box_form.save()
-                        return redirect('camera_atual',email, nome, ip)
+                        boxC = BoundingBox.objects.all().last()
+                        boxC.x1 = newBox['x1']
+                        boxC.x2 = newBox['x2']
+                        boxC.y1 = newBox['y1']
+                        boxC.y2 = newBox['y2']
+                        boxC.num_max_pessoas = newBox["num_max_pessoas"]
+                        boxC.num_min_pessoas = newBox["num_min_pessoas"]
+                        boxC.horario_inicial = newBox['horario_inicial']
+                        boxC.horario_final = newBox['horario_final']
+                        boxC.cor = "#" + newBox['cor']
+                        boxC.save()
+                        return redirect('camera_atual', email, nome, ip)
 
             for box in bounding_boxes:
                 action_remover_bounding_box = request.POST.get('removerBoundingBox' + str(box.id))
@@ -448,18 +480,17 @@ def camera_view(request, email, nome, ip):
                 if action_editar_bounding_box == "Confirmar Edição":
                     '''box.x1 = bounding_box_form['x1'].value()
                     box.save()'''
-
                     if bounding_box_form.is_valid():
                         newBox = bounding_box_form.cleaned_data
-                        box.x1=newBox['x1']
-                        box.x2=newBox['x2']
-                        box.y1=newBox['y1']
-                        box.y2=newBox['y2']
-                        box.num_max_pessoas=newBox["num_max_pessoas"]
-                        box.num_min_pessoas=newBox["num_min_pessoas"]
-                        box.horario_inicial=newBox['horario_inicial']
-                        box.horario_final=newBox['horario_final']
-                        box.cor=newBox['cor']
+                        box.x1 = newBox['x1']
+                        box.x2 = newBox['x2']
+                        box.y1 = newBox['y1']
+                        box.y2 = newBox['y2']
+                        box.num_max_pessoas = newBox["num_max_pessoas"]
+                        box.num_min_pessoas = newBox["num_min_pessoas"]
+                        box.horario_inicial = newBox['horario_inicial']
+                        box.horario_final = newBox['horario_final']
+                        box.cor = "#" + newBox['cor']
                         box.save()
                     return redirect('camera_atual', email, nome, ip)
 
@@ -474,26 +505,25 @@ def camera_view(request, email, nome, ip):
         with open(os.path.join(cwd, 'jsons', 'alerts.json')) as alert_file:
             alert_json = json.load(alert_file)
 
-
         for key in alert_json:
             tmp = BoundingBox.objects.get(id=key)
 
             date = alert_json[key]['date'].split('/')
-            date = str_to_date(date[2]+'/'+date[0]+'/'+date[1])
+            date = str_to_date(date[2] + '/' + date[0] + '/' + date[1])
 
             tmp_2 = Alerta.objects.all().filter(bounding_box_id=tmp,
-                                           data = date,
-                                           hora = alert_json[key]['time'],
-                                           tipo =  alert_json[key]['alert'])
+                                                data=date,
+                                                hora=alert_json[key]['time'],
+                                                tipo=alert_json[key]['alert'])
 
             if len(tmp_2) == 0:
                 alerta = Alerta.objects.create(bounding_box_id=tmp,
-                                               data = date,
-                                               hora = alert_json[key]['time'],
-                                               tipo =  alert_json[key]['alert'])
+                                               data=date,
+                                               hora=alert_json[key]['time'],
+                                               tipo=alert_json[key]['alert'])
                 alerta.bounding_box_id = tmp
                 alerta.save()
-                #lista_alertas.append(alerta)
+                # lista_alertas.append(alerta)
 
         lista_alertas = []
 
@@ -503,20 +533,20 @@ def camera_view(request, email, nome, ip):
                 lista_alertas.append(alerta)
                 context[str(alerta.id)] = box.cor
 
-        context['alertas'] = lista_alertas[len(lista_alertas)-10:]
+        context['alertas'] = lista_alertas[len(lista_alertas) - 10:]
 
     return render(request, "camera_view.html", context)
 
 
 def load_json(request):
-
     print('passou')
     with open(os.path.join(cwd, 'jsons', 'alerts.json')) as alert_file:
         alert_json = json.load(alert_file)
 
     print('passou')
 
-    return StreamingHttpResponse({'alert': alert_json},  'camera_view.html', content_type='application/html')
+    return StreamingHttpResponse({'alert': alert_json}, 'camera_view.html', content_type='application/html')
+
 
 def camera_edit_view(request, email, nome, ip):
     action_cancelar = request.GET.get('cancelar')
@@ -533,13 +563,12 @@ def camera_edit_view(request, email, nome, ip):
     camera = camera[0]
     context['camera'] = camera
 
-    form = CameraForm(request.POST or None, initial={'ip':camera.ip,
-                                                     'usuario':camera.usuario,
+    form = CameraForm(request.POST or None, initial={'ip': camera.ip,
+                                                     'usuario': camera.usuario,
                                                      'senha': camera.senha,
-                                                     'porta':camera.porta,
-                                                     'ambiente_id':camera.ambiente_id,
-                                                     'num_boundingbox':camera.num_boundingbox})
-
+                                                     'porta': camera.porta,
+                                                     'ambiente_id': camera.ambiente_id,
+                                                     'num_boundingbox': camera.num_boundingbox})
 
     flag_cam_existente = False
     if (camera != None) and (camera != []):
@@ -563,6 +592,7 @@ def camera_edit_view(request, email, nome, ip):
     context['nome_in_edit'] = nome
     return render(request, "camera_edit_view.html", context)
 
+
 def camera_create_view(request, email, nome):
     context = {}
     context['data'] = Cliente.objects.get(email=email)
@@ -578,21 +608,23 @@ def camera_create_view(request, email, nome):
     try:
         if form.is_valid() and not flag_cam_existe:
             form.save()
-            return redirect('ambiente_atual',email, nome)
-        elif(form.is_valid() and flag_cam_existe):
+            return redirect('ambiente_atual', email, nome)
+        elif (form.is_valid() and flag_cam_existe):
             raise ValidationError('errou')
 
     except ValidationError:
         messages.info(request, 'A câmera com o ip informado já existe')
-    
+
     context['form'] = form
     return render(request, "camera_create_view.html", context)
+
 
 def remover_bounding_box(bounding_box_id):
     bounding_box = BoundingBox.objects.get(id=bounding_box_id)[0]
 
     if bounding_box != None:
         bounding_box.delete()
+
 
 def remover_camera(email, nome, cam_ip):
     cliente = Cliente.objects.get(email=email)
@@ -604,6 +636,7 @@ def remover_camera(email, nome, cam_ip):
     if camera != None and len(camera) > 0:
         camera.delete()
 
+
 class VideoCamera(object):
     def __init__(self, usuario, senha, ip, porta):
         self.video = cv2.VideoCapture("rtsp://{}:{}@{}:{}".format(usuario, senha, ip, porta))
@@ -614,22 +647,27 @@ class VideoCamera(object):
     def get_frame(self, ip, count):
         ret, frame = self.video.read()
 
-        frame_width = int(frame.shape[1]*0.7)
-        frame_height = int(frame.shape[0]*0.7)
+        frame_width = int(frame.shape[1] * 0.7)
+        frame_height = int(frame.shape[0] * 0.7)
 
-        frame = cv2.resize(frame,(frame_width, frame_height),interpolation=cv2.INTER_AREA)
+        frame = cv2.resize(frame, (frame_width, frame_height), interpolation=cv2.INTER_AREA)
 
         if count % 360 == 0:
             print('--- salvou ---')
             cv2.imwrite('frame.png', frame)
 
-        bounding_box = BoundingBox.objects.all().filter(camera_ip = ip)
+        bounding_box = BoundingBox.objects.all().filter(camera_ip=ip)
         frame_box = frame
         for i in bounding_box:
-            frame_box = cv2.rectangle(frame_box, (i.x1,i.y1),(i.x2,i.y2),  tuple(int(str(i.cor)[j:j+2], 16) for j in (0, 2, 4)),2)
+            frame_box = cv2.rectangle(frame_box, (i.x1, i.y1), (i.x2, i.y2),
+                                      tuple(int(str(i.cor.lstrip("#"))[j:j + 2], 16) for j in (0, 2, 4)), 2)
+            id_text = 'id:' + str(i.id)
+            cv2.putText(frame_box, id_text, (i.x1, i.y1 - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.9,
+                        tuple(int(str(i.cor.lstrip("#"))[j:j + 2], 16) for j in (0, 2, 4)), 2)
         ret, frame_box = cv2.imencode('.jpg', frame_box)
         set_shape(frame_width, frame_height)
         return frame_box.tobytes()
+
 
 def gen(camera, ip):
     count = 0
@@ -641,17 +679,20 @@ def gen(camera, ip):
             count = 0
 
         yield (b'--frame\r\n'
-                b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n\r\n')
+               b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n\r\n')
+
 
 def video_stream(request, usuario, senha, ip, porta):
-    return StreamingHttpResponse(gen(VideoCamera(usuario, senha, ip, porta),ip),
-                    content_type='multipart/x-mixed-replace; boundary=frame')
+    return StreamingHttpResponse(gen(VideoCamera(usuario, senha, ip, porta), ip),
+                                 content_type='multipart/x-mixed-replace; boundary=frame')
+
 
 def set_shape(imagem_width, imagem_height):
     global width
     width = imagem_width
     global height
     height = imagem_height
+
 
 def relatorio_view(request, email):
     context = {}
@@ -665,8 +706,8 @@ def relatorio_view(request, email):
     if action_historico == "Histórico":
         return redirect("relatorio_historico", email)
 
-
     return render(request, "relatorio_view.html", context)
+
 
 def relatorio_create_view(request, email):
     context = {}
@@ -680,10 +721,11 @@ def relatorio_create_view(request, email):
         return redirect("relatorio_detail_view", email, relatorio_criado.id)
     return render(request, "relatorio_create_view.html", context)
 
+
 def relatorio_detail_view(request, email, relatorio_id):
     context = {}
     context["data"] = Cliente.objects.get(email=email)
-    relatorio = Relatorio.objects.get(cliente_id=context["data"].id ,id=relatorio_id)
+    relatorio = Relatorio.objects.get(cliente_id=context["data"].id, id=relatorio_id)
     context["relatorio"] = relatorio
     action_exportar_relatorio = request.POST.get('exportarRelatorio')
     if action_exportar_relatorio == "Exportar Relatório":
@@ -702,22 +744,21 @@ def relatorio_historico_view(request, email):
         if action_view == 'Visualizar':
             return redirect('relatorio_detail_view', email, report.id)
 
-
     return render(request, "relatorio_historico_view.html", context)
 
 
-def generate_pdf(request, email,id):
+def generate_pdf(request, email, id):
     relatorio = Relatorio.objects.get(id=id)
     buf = io.BytesIO()
     c = canvas.Canvas(buf, pagesize=letter, bottomup=0)
 
     c.drawImage('/home/arnaldo/SafeBox/projetao/safebox/logo.png', 50, 50, 500,
-                     preserveAspectRatio=True, mask='auto')  # MAKE SURE IMAGE IS DYNAMIC AND HAS MAX SETS
+                preserveAspectRatio=True, mask='auto')  # MAKE SURE IMAGE IS DYNAMIC AND HAS MAX SETS
 
     textob = c.beginText()
     textob.setTextOrigin(inch, inch)
     textob.setFont("Helvetica-Bold", 32)
-    textob.textLine("Relatório de "+email)
+    textob.textLine("Relatório de " + email)
     textob.setFont("Helvetica", 16)
     ####################################
     textob.textLine("=====================================================")
@@ -733,29 +774,28 @@ def generate_pdf(request, email,id):
         textob.setFont("Helvetica", 16)
         cameras = Camera.objects.all().filter(ambiente_id=amb.id)
         for cam in cameras:
-            textob.textLine("Nome da Câmera: "+cam.nome)
+            textob.textLine("Nome da Câmera: " + cam.nome)
             box = BoundingBox.objects.all().filter(camera_ip=cam)
-            textob.textLine("Bounding Boxes: "+str(len(box)))
+            textob.textLine("Bounding Boxes: " + str(len(box)))
             for b in box:
-                textob.setFillColorRGB(255,0,0)
-                alertas = Alerta.objects.all().filter(bounding_box_id=b, data__gte=relatorio.data_inicial,data__lte=relatorio.data_final)
-                textob.textLine("Alertas: "+str(len(alertas)))
+                textob.setFillColorRGB(255, 0, 0)
+                alertas = Alerta.objects.all().filter(bounding_box_id=b, data__gte=relatorio.data_inicial,
+                                                      data__lte=relatorio.data_final)
+                textob.textLine("Alertas: " + str(len(alertas)))
                 for alerta in alertas:
-                    textob.textLine("Alerta Info: "+str(alerta.data)+" "+str(alerta.hora)+" "+str(alerta.tipo))
+                    textob.textLine(
+                        "Alerta Info: " + str(alerta.data) + " " + str(alerta.hora) + " " + str(alerta.tipo))
 
                 textob.setFillColorRGB(0, 0, 0)
 
-
-
         textob.textLine("=====================================================")
-
 
     c.drawText(textob)
     c.showPage()
     c.save()
     buf.seek(0)
 
-    return FileResponse(buf, as_attachment=True,filename="relatorio"+str(relatorio.data_inicial)+"----"+str(relatorio.data_final)+".pdf")
-
+    return FileResponse(buf, as_attachment=True, filename="relatorio" + str(relatorio.data_inicial) + "----" + str(
+        relatorio.data_final) + ".pdf")
 
 

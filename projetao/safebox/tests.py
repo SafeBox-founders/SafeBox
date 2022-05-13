@@ -5,7 +5,8 @@ from .models import Camera, Cliente, Plano, Assinatura, Ambiente, Alerta, Boundi
 import unittest
 from django.urls import reverse
 
-#testes de unidade
+
+# testes de unidade
 
 class ClienteTest(TestCase):
 
@@ -24,13 +25,13 @@ class ClienteTest(TestCase):
 
     def test_fields(self):
         record = Cliente.objects.get(email="teste@gmail.com")
-        self.assertEqual(self.cliente,record)
-    
+        self.assertEqual(self.cliente, record)
+
     def test_get_absolute_url(self):
         record = Cliente.objects.get(email="teste@gmail.com")
-        testurl = reverse('visualizar',args=[record.email])
+        testurl = reverse('visualizar', args=[record.email])
         url = reverse('visualizar', args=[self.cliente.email])
-        self.assertEqual(url,testurl)
+        self.assertEqual(url, testurl)
 
     def test_desactivate(self):
         cliente = Cliente.objects.get(email="teste@gmail.com")
@@ -72,6 +73,7 @@ class ClienteTest(TestCase):
         cliente.set_senha(nova_senha)
         self.assertEqual(cliente.get_senha(), nova_senha)
 
+
 class PlanoTest(TestCase):
     def setUp(self):
         self.plano = Plano()
@@ -81,22 +83,25 @@ class PlanoTest(TestCase):
         self.plano.numero_cameras = 1
         self.plano.numero_boundingbox = 3
         self.plano.save()
-        
+
     def tearDown(self):
         plano = Plano.objects.get(nome="Básico")
         Plano.delete(plano)
 
     def test_fields(self):
         record = Plano.objects.get(nome="Básico")
-        self.assertEqual(self.plano,record)
-    
+        self.assertEqual(self.plano, record)
+
+
 class AssinaturaTest(TestCase):
     def setUp(self):
         self.assinatura = Assinatura()
-        cliente = Cliente.objects.create(nome="testador",email="teste@gmail.com",contato="00000000000",cpf_cnpj="00000000000",senha="123456")
-        plano = Plano.objects.create(nome="Básico", valor=50.00, relatorio =False, numero_cameras=1, numero_boundingbox=3)
-        self.assinatura = Assinatura.objects.create(cliente_id = cliente, plano_id = plano, data_de_pagamento=None,pagamento_status=False)
-        
+        cliente = Cliente.objects.create(nome="testador", email="teste@gmail.com", contato="00000000000",
+                                         cpf_cnpj="00000000000", senha="123456")
+        plano = Plano.objects.create(nome="Básico", valor=50.00, relatorio=False, numero_cameras=1,
+                                     numero_boundingbox=3)
+        self.assinatura = Assinatura.objects.create(cliente_id=cliente, plano_id=plano, data_de_pagamento=None,
+                                                    pagamento_status=False)
 
     def tearDown(self):
         cliente = Cliente.objects.get(email="teste@gmail.com")
@@ -110,26 +115,28 @@ class AssinaturaTest(TestCase):
     def test_fields(self):
         cliente = Cliente.objects.get(email="teste@gmail.com")
         record = Assinatura.objects.get(cliente_id=cliente.id)
-        self.assertEqual(self.assinatura,record)
-
+        self.assertEqual(self.assinatura, record)
 
     def test_edit_plano(self):
-        novo_plano = Plano.objects.create(nome="Premium", valor=100.00, relatorio=True, numero_cameras=3, numero_boundingbox=9)
+        novo_plano = Plano.objects.create(nome="Premium", valor=100.00, relatorio=True, numero_cameras=3,
+                                          numero_boundingbox=9)
         cliente = Cliente.objects.get(email="teste@gmail.com")
         assinatura = Assinatura.objects.get(cliente_id=cliente.id)
         assinatura.set_plano_id(novo_plano)
         self.assertEqual(assinatura.get_plano_id(), novo_plano)
 
+
 class AmbienteTest(TestCase):
     def setUp(self):
         self.ambiente = Ambiente()
-        cliente = Cliente.objects.create(nome="testador",email="teste@gmail.com",contato="00000000000",cpf_cnpj="00000000000",senha="123456")
-        self.ambiente = Ambiente.objects.create(cliente_id = cliente, nome = "Ambiente de teste", numero_cameras=0)
+        cliente = Cliente.objects.create(nome="testador", email="teste@gmail.com", contato="00000000000",
+                                         cpf_cnpj="00000000000", senha="123456")
+        self.ambiente = Ambiente.objects.create(cliente_id=cliente, nome="Ambiente de teste", numero_cameras=0)
 
     def test_fields(self):
         cliente = Cliente.objects.get(email="teste@gmail.com")
         record = Ambiente.objects.get(cliente_id=cliente.id)
-        self.assertEqual(self.ambiente,record)
+        self.assertEqual(self.ambiente, record)
 
     def test_deactivate_ambiente(self):
         cliente = Cliente.objects.get(email="teste@gmail.com")
@@ -137,14 +144,17 @@ class AmbienteTest(TestCase):
         lista_ambientes = Ambiente.objects.filter(cliente_id=cliente, nome="Ambiente de teste")
         self.assertEqual(len(lista_ambientes), 0)
 
+
 class CameraTest(TestCase):
     def setUp(self):
         ambiente = Ambiente()
-        cliente = Cliente.objects.create(nome="testador",email="teste@gmail.com",contato="00000000000",cpf_cnpj="00000000000",senha="123456")
-        ambiente = Ambiente.objects.create(cliente_id = cliente, nome = "Ambiente de teste", numero_cameras=0)
+        cliente = Cliente.objects.create(nome="testador", email="teste@gmail.com", contato="00000000000",
+                                         cpf_cnpj="00000000000", senha="123456")
+        ambiente = Ambiente.objects.create(cliente_id=cliente, nome="Ambiente de teste", numero_cameras=0)
         self.camera = Camera()
-        self.camera = Camera.objects.create(nome="camera teste", ip="10.0.0.0", ambiente_id = ambiente, usuario="admin", senha="admin", porta="8080")
-    
+        self.camera = Camera.objects.create(nome="camera teste", ip="10.0.0.0", ambiente_id=ambiente, usuario="admin",
+                                            senha="admin", porta="8080")
+
     def test_fields(self):
         cliente = Cliente.objects.get(email="teste@gmail.com")
         ambiente = Ambiente.objects.get(cliente_id=cliente.id)
@@ -157,7 +167,7 @@ class CameraTest(TestCase):
 
         with self.assertRaises(Camera.DoesNotExist):
             Camera.objects.get(ip=camera_ip)
-            
+
     def test_Edit_Nome(self):
         cliente = Cliente.objects.get(email="teste@gmail.com")
         ambiente = Ambiente.objects.get(cliente_id=cliente.id)
@@ -165,6 +175,7 @@ class CameraTest(TestCase):
         novo_nome = 'Cam_Teste'
         camera.set_nome(novo_nome)
         self.assertEqual(camera.get_nome(), novo_nome)
+
 
 class AlertaTest(TestCase):
     def setUp(self):
@@ -185,7 +196,7 @@ class AlertaTest(TestCase):
         bounding_box.num_max_pessoas = 2
         bounding_box.horario_inicial = datetime.strptime('06:00:00', '%H:%M:%S').time()
         bounding_box.horario_final = datetime.strptime('23:00:00', '%H:%M:%S').time()
-        bounding_box.cor = 345673
+        bounding_box.cor = "#000000"
         bounding_box.camera_ip = self.camera
         bounding_box.save()
 
@@ -199,5 +210,4 @@ class AlertaTest(TestCase):
     def test_create_alert(self):
         alerta = Alerta.objects.last()
         self.assertEqual(self.alerta, alerta)
-
 

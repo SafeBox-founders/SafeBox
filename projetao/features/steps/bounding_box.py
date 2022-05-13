@@ -44,7 +44,7 @@ def step_impl(context):
     choice = context.browser.find_element_by_name("horario_final")
     choice.send_keys("10:00")
     choice = context.browser.find_element_by_name("cor")
-    choice.send_keys(111111)
+    choice.send_keys("#000000")
 
 @When("I click on criar bounding box")
 def step_impl(context):
@@ -105,7 +105,7 @@ def step_impl(context):
     choice = context.browser.find_element_by_id("id_horario_final")
     choice.send_keys("10:30")
     choice = context.browser.find_element_by_id("id_cor")
-    choice.send_keys(222222)
+    choice.send_keys("#000000")
 
 @When("I click on confirmar edicao of box")
 def step_impl(context):
@@ -125,7 +125,7 @@ def step_impl(context):
     assert str(box.num_min_pessoas) == str(5)
     assert str(box.horario_inicial) == str("09:10:00")
     assert str(box.horario_final) == str("10:30:00")
-    assert str(box.cor) == str(222222)
+    assert str(box.cor) == str("#000000")
 
 @Given("I do not fill all box fields")
 def step_impl(context):

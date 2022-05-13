@@ -1,12 +1,13 @@
 from django.db import models
 from django.urls import reverse
 
+
 class Cliente(models.Model):
-    nome = models.CharField(max_length=255,null=False)
-    email = models.EmailField(max_length=255,null=False,unique=True)
-    contato = models.CharField(max_length=11,null=False)
-    cpf_cnpj = models.CharField(max_length=11,null=False,unique=True)
-    senha = models.CharField(max_length=12,null=False)
+    nome = models.CharField(max_length=255, null=False)
+    email = models.EmailField(max_length=255, null=False, unique=True)
+    contato = models.CharField(max_length=11, null=False)
+    cpf_cnpj = models.CharField(max_length=11, null=False, unique=True)
+    senha = models.CharField(max_length=12, null=False)
     joined = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
     active = models.BooleanField(default=True)
@@ -15,7 +16,7 @@ class Cliente(models.Model):
         return self.email
 
     def get_absolute_url(self):
-        return reverse('visualizar',kwargs={"str":self.email})
+        return reverse('visualizar', kwargs={"str": self.email})
 
     def get_nome(self):
         return self.nome
@@ -56,8 +57,9 @@ class Cliente(models.Model):
     def get_active(self):
         return self.active
 
+
 class Plano(models.Model):
-    nome = models.CharField(max_length=255,null=False, unique=True)
+    nome = models.CharField(max_length=255, null=False, unique=True)
     valor = models.FloatField(null=False)
     relatorio = models.BooleanField(null=False)
     numero_cameras = models.IntegerField(null=False)
@@ -66,9 +68,10 @@ class Plano(models.Model):
     def __str__(self):
         return self.nome
 
+
 class Assinatura(models.Model):
     cliente_id = models.ForeignKey(Cliente, to_field="id", on_delete=models.CASCADE)
-    plano_id = models.ForeignKey(Plano, to_field="id",on_delete=models.CASCADE)
+    plano_id = models.ForeignKey(Plano, to_field="id", on_delete=models.CASCADE)
     data_de_pagamento = models.DateTimeField(auto_now_add=True)
     pagamento_status = models.BooleanField(null=False, default=False)
 
@@ -91,7 +94,7 @@ class Assinatura(models.Model):
 class Ambiente(models.Model):
     cliente_id = models.ForeignKey(Cliente, to_field="id", on_delete=models.CASCADE)
     nome = models.CharField(max_length=255, null=False)
-    numero_cameras = models.IntegerField(null=False,default=0)
+    numero_cameras = models.IntegerField(null=False, default=0)
 
     def __str__(self):
         return self.nome
@@ -100,7 +103,7 @@ class Ambiente(models.Model):
         return self.cliente_id
 
     def get_nome(self):
-        return  self.nome
+        return self.nome
 
     def get_numero_cameras(self):
         return self.numero_cameras
@@ -111,10 +114,11 @@ class Ambiente(models.Model):
     def deactivate(self):
         self.delete()
 
+
 class Camera(models.Model):
     ip = models.CharField(max_length=255, null=False, unique=True)
     nome = models.CharField(max_length=255, null=False)
-    num_boundingbox = models.IntegerField(null=False,default=0)
+    num_boundingbox = models.IntegerField(null=False, default=0)
     ambiente_id = models.ForeignKey(Ambiente, to_field="id", on_delete=models.CASCADE)
     usuario = models.CharField(max_length=255, null=False)
     senha = models.CharField(max_length=255, null=False)
@@ -122,7 +126,7 @@ class Camera(models.Model):
 
     def __str__(self) -> str:
         return self.nome
-    
+
     def get_ip(self):
         return self.ip
 
@@ -131,6 +135,7 @@ class Camera(models.Model):
 
     def set_nome(self, novo_nome):
         self.nome = novo_nome
+
 
 class BoundingBox(models.Model):
     camera_ip = models.ForeignKey(Camera, to_field="ip", on_delete=models.CASCADE)
@@ -142,7 +147,7 @@ class BoundingBox(models.Model):
     num_min_pessoas = models.IntegerField(null=False)
     horario_inicial = models.TimeField(null=False)
     horario_final = models.TimeField(null=False)
-    cor = models.IntegerField(null=False)
+    cor = models.CharField(max_length=7, default="#000000")
 
     def to_dict(self):
         dict = {"y1": str(self.y1), "x1": str(self.x1), "y2": str(self.y2), "x2": str(self.x2),
@@ -150,16 +155,17 @@ class BoundingBox(models.Model):
                 "max": str(self.num_max_pessoas)}
         return dict
 
+
 class Alerta(models.Model):
     bounding_box_id = models.ForeignKey(BoundingBox, to_field='id', on_delete=models.CASCADE)
     data = models.DateField(null=False)
     hora = models.TimeField(null=False)
     tipo = models.TextField(null=False)
 
+
 class Relatorio(models.Model):
     cliente_id = models.ForeignKey(Cliente, to_field="id", on_delete=models.CASCADE)
     data_inicial = models.DateField(auto_now_add=False, auto_now=False, blank=True, null=True)
     data_final = models.DateField(auto_now_add=False, auto_now=False, blank=True, null=True)
-
 
 

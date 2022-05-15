@@ -65,6 +65,12 @@ class Plano(models.Model):
     numero_cameras = models.IntegerField(null=False)
     numero_boundingbox = models.IntegerField(null=False)
 
+    def get_num_cam(self):
+        return self.numero_cameras
+
+    def get_num_bbox(self):
+        return self.numero_boundingbox
+
     def __str__(self):
         return self.nome
 

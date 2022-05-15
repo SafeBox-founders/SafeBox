@@ -255,10 +255,31 @@ def assinatura_trocar_view(request, email):
     context['data'] = Cliente.objects.get(email=email)
     assinaturas = Assinatura.objects.all()
     assinatura = assinaturas.filter(cliente_id=context['data'].id)
+    ambientes = Ambiente.objects.all().filter(client_id=)
+
+    #####################################################################
+    # Verifica o número de câmeras no plano do cliente
+    planos = Plano.objects.all()
+    plano = planos.filter(nome=assinatura.get_plano_id())[0]
+    max_cams = plano.get_num_cam()
+
+    #####################################################################
+    # Pega o número de câmeras atuais do cliente
+
+    ambientes_do_cliente = ambientes.filter(cliente_id=context['data'].id)
+
+    numero_de_cameras_atuais = 0
+
+    for amb in ambientes_do_cliente:
+        cameras_do_amb = cameras.filter(ambiente_id=amb.id)
+        numero_de_cameras_atuais += len(cameras_do_amb)
 
     flag_assinatura_existente = False
     if (assinatura != None) and (len(assinatura) != 0):
         flag_assinatura_existente = True
+
+
+
 
     form = AssinaturaForm(request.POST or None, initial={"cliente_id": context['data'].id})
     if form.is_valid() and flag_assinatura_existente:

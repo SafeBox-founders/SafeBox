@@ -1,14 +1,12 @@
 Feature: Assign a plan to my user account
     Scenario: As a client of the system, I want to visualize my current signature
         Given I am on the Profile View
-        And I have a signature
         When I click on the Visualizar Assinatura button
         Then I go to my signature view
         And I can see my current signature
 
     Scenario: As a client of the system, I want to edit my current signature
         Given I am on the Profile View
-        And I have a signature
         When I click on the Visualizar Assinatura button
         Then I go to my signature view
         And I click on Trocar Plano
@@ -18,7 +16,6 @@ Feature: Assign a plan to my user account
 
     Scenario: As a cliente of the system, I want to remove the current signature
         Given I am on the Profile View
-        And I have a signature
         When I click on the Visualizar Assinatura button
         Then I go to my signature view
         And I click on Remover Plano

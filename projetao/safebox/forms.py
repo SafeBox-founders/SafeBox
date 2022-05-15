@@ -19,6 +19,8 @@ class ClienteForm(forms.ModelForm):
 
         if len(contato) < min_length or len(contato) > max_length:
             raise ValidationError("Contato residencial ou celular deve ter entre %s e %s números!" %(min_length, max_length))
+        else:
+            return contato
 
     def clean_cpf_cnpj(self):
         value = self.cleaned_data['cpf_cnpj']

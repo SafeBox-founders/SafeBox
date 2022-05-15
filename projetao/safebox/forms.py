@@ -56,16 +56,27 @@ class CameraForm(forms.ModelForm):
         fields = ["ip", "nome", "usuario", "senha", "porta", "ambiente_id", "num_boundingbox"]
         widgets = {"ambiente_id":forms.HiddenInput(), "num_boundingbox":forms.HiddenInput()}
 
+CHOICES = [
+    ("000000","Preto"),
+    ("FF0000","Azul"),
+    ("00FF00","Verde"),
+    ("F020A0","Roxo"),
+    ("CBC0FF","Rosa"),
+    ("0000FF","Vermelho"),
+    ("00A5FF","Laranja"),
+    ("00FFFF","Amarelo"),
+    ("FFFFFF","Branco")]
+
 class BoundingBoxForm(forms.ModelForm):
     class Meta:
         model = BoundingBox
-        fields = ["camera_ip","x1","y1","x2","y2","num_max_pessoas","num_min_pessoas","horario_inicial","horario_final","cor"]
+        fields = ["camera_ip","x1","y1","x2","y2","num_max_pessoas","num_min_pessoas","horario_inicial","horario_final"]
         widgets = {"camera_ip": forms.HiddenInput()}
+
+    cor = forms.ChoiceField(choices=CHOICES, widget=forms.Select(), required=True)
 
 class RelatorioForm(forms.ModelForm):
     class Meta:
         model = Relatorio
         fields = ["cliente_id", "data_inicial", "data_final"]
         widgets = {"cliente_id": forms.HiddenInput()}
-
-

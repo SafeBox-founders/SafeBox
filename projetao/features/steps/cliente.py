@@ -94,7 +94,12 @@ def step_impl(context):
     and Eu estou na tela de login
     and Eu preencho o campo email e senha
     when Eu pressiono o botao "Logar"
-    then Eu vejo que estou logado""")
+    then Eu vejo que estou logado
+    given I acess the profile view
+    when I click on the Assinar plano button
+    and I chose my plan
+    and I click on the Assinar button
+    then I assigned my plan""")
 
 
 @Given("I access the profile view")

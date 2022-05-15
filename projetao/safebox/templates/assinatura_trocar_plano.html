@@ -97,9 +97,16 @@
                 <form method="POST" enctype="multipart/form-data">
                     {% csrf_token %}
                     {{ form|crispy}}
-                    <input type="submit" class="btn btn-primary" value="Mudar de Plano" name="trocar"/>
+                    <input type="submit" class="btn btn-primary" value="Mudar de Plano" name="trocar" onclick="return{{message.success}}"/>
+                    {% if messages %}
+                    {% endif %}
                 </form>
                 </div>
+                <ul class="messages">
+                        {% for message in messages %}
+                        <li {% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+                        {% endfor %}
+                    </ul>
             </div>
 
         </div>

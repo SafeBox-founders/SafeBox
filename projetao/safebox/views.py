@@ -105,6 +105,10 @@ def cliente_assinatura_view(request, email):
 
     if action_remover == 'Remover Plano':
         # messages.info(request, "Assinatura desfeita com sucesso!")
+        ambientes = Ambiente.objects.all().filter(cliente_id=context['data'].id)
+        for amb in ambientes:
+            amb.delete()
+
         remover_assinatura(request, email)
         return redirect('visualizar', email)
 
@@ -255,16 +259,37 @@ def assinatura_trocar_view(request, email):
     context['data'] = Cliente.objects.get(email=email)
     assinaturas = Assinatura.objects.all()
     assinatura = assinaturas.filter(cliente_id=context['data'].id)
+    ambientes = Ambiente.objects.all()
+    cameras = Camera.objects.all()
+    planos = {1:1, 2:3, 3:999}
+
+
+    #####################################################################
+    # Pega o número de câmeras atuais do cliente
+
+    ambientes_do_cliente = ambientes.filter(cliente_id=context['data'].id)
+
+    numero_de_cameras_atuais = 0
+
+    for amb in ambientes_do_cliente:
+        cameras_do_amb = cameras.filter(ambiente_id=amb.id)
+        numero_de_cameras_atuais += len(cameras_do_amb)
 
     flag_assinatura_existente = False
     if (assinatura != None) and (len(assinatura) != 0):
         flag_assinatura_existente = True
 
     form = AssinaturaForm(request.POST or None, initial={"cliente_id": context['data'].id})
+
     if form.is_valid() and flag_assinatura_existente:
-        assinatura.delete()
-        form.save()
-        return redirect('visualizar_assinatura', email)
+
+        max_cams = planos[int(form['plano_id'].value())]
+        if numero_de_cameras_atuais <= max_cams:
+            assinatura.delete()
+            form.save()
+            return redirect('visualizar_assinatura', email)
+        else:
+            messages.success(request, 'A troca para este plano requer que você tenha um número de câmeras compativel. Delete as câmeras que você não deseja mais usar.')
 
     planos = Plano.objects.all()
     context['form'] = form
@@ -417,8 +442,32 @@ def camera_view(request, email, nome, ip):
     context['camera'] = camera[0]
     bounding_box_form = BoundingBoxForm(request.POST or None, initial={"camera_ip": ip})
     context['form_bounding_box'] = bounding_box_form
+    allboxes =  BoundingBox.objects.all()
     bounding_boxes = BoundingBox.objects.all().filter(camera_ip=ip)
     context['bounding_boxes'] = bounding_boxes
+
+    ambientes = Ambiente.objects.all()
+
+    #####################################################################
+    # Verifica o número de boundingboxes no plano do cliente
+
+    Assin = Assinatura.objects.get(cliente_id=context['data'].id)
+    planos = Plano.objects.all()
+    plano = planos.filter(nome=Assin.get_plano_id())[0]
+    max_boxes = plano.get_num_bbox()
+
+    #####################################################################
+    # Pega o número de boundingboxes atuais do cliente
+
+    ambientes_do_cliente = ambientes.filter(cliente_id=context['data'].id)
+
+    numero_de_bb_atuais = 0
+
+    for amb in ambientes_do_cliente:
+        cameras_do_amb = cameras.filter(ambiente_id=amb.id)
+        for cams in cameras_do_amb:
+            boxes = allboxes.filter(camera_ip=cams.ip)
+            numero_de_bb_atuais += len(boxes)
 
     if camera != None and len(camera) != 0:
         for cam in camera:
@@ -437,7 +486,7 @@ def camera_view(request, email, nome, ip):
             context["width"] = width
             context["height"] = height
             if action_criar_bounding_box == "Criar Bounding Box":
-                if (bounding_box_form.is_valid()):
+                if (bounding_box_form.is_valid() and (numero_de_bb_atuais < max_boxes)):
                     if (0 > int(bounding_box_form['x1'].value()) or int(bounding_box_form['x1'].value()) > width):
                         messages.info(request,
                                       "Valor de X1 negativo ou superior ao tamanho da imagem, valor máximo:" + str(
@@ -563,6 +612,9 @@ def camera_edit_view(request, email, nome, ip):
     camera = camera[0]
     context['camera'] = camera
 
+
+
+
     form = CameraForm(request.POST or None, initial={'ip': camera.ip,
                                                      'usuario': camera.usuario,
                                                      'senha': camera.senha,
@@ -570,7 +622,10 @@ def camera_edit_view(request, email, nome, ip):
                                                      'ambiente_id': camera.ambiente_id,
                                                      'num_boundingbox': camera.num_boundingbox})
 
+
+
     flag_cam_existente = False
+
     if (camera != None) and (camera != []):
         for cam in cameras:
             if cam.get_nome() == form['nome'].value():
@@ -597,9 +652,40 @@ def camera_create_view(request, email, nome):
     context = {}
     context['data'] = Cliente.objects.get(email=email)
     context['ambiente'] = Ambiente.objects.get(cliente_id=context['data'].id, nome=nome)
+    ambientes = Ambiente.objects.all()
     cameras = Camera.objects.all()
+
+    #####################################################################
+    # Verifica o número de câmeras no plano do cliente
+
+    try:
+        Assin = Assinatura.objects.get(cliente_id=context['data'].id)
+    except:
+        return redirect('home', email)
+    planos = Plano.objects.all()
+    plano = planos.filter(nome=Assin.get_plano_id())[0]
+    max_cams = plano.get_num_cam()
+
+    #####################################################################
+    # Pega o número de câmeras atuais do cliente
+
+    ambientes_do_cliente = ambientes.filter(cliente_id=context['data'].id)
+
+    numero_de_cameras_atuais = 0
+
+    for amb in ambientes_do_cliente:
+        cameras_do_amb = cameras.filter(ambiente_id=amb.id)
+        numero_de_cameras_atuais += len(cameras_do_amb)
+
+
+
     form = CameraForm(request.POST or None, initial={"ambiente_id": context['ambiente'].id})
+
     flag_cam_existe = False
+
+    if (numero_de_cameras_atuais >= max_cams):
+        flag_cam_existe = True
+
     if (cameras != None) and (cameras != []):
         for cam in cameras:
             if cam.get_ip() == form['ip'].value():
@@ -613,7 +699,7 @@ def camera_create_view(request, email, nome):
             raise ValidationError('errou')
 
     except ValidationError:
-        messages.info(request, 'A câmera com o ip informado já existe')
+        messages.info(request, 'A câmera com o ip informado já existe ou você está excedendo o número de câmeras que seu perfil permite')
 
     context['form'] = form
     return render(request, "camera_create_view.html", context)
